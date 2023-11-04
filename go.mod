@@ -1,4 +1,4 @@
-module github.com/seanmorton/hledger-webapp
+module github.com/seanmorton/hledger-htmx
 
 go 1.21
 

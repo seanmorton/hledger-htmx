@@ -4,21 +4,21 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/seanmorton/hledger-webapp/internal"
-	"github.com/seanmorton/hledger-webapp/internal/templates"
+	"github.com/seanmorton/hledger-htmx/internal/hledger"
+	"github.com/seanmorton/hledger-htmx/internal/templates"
 )
 
 func main() {
-	accounts, _ := internal.Accounts()
-	register := []internal.RegisterEntry{}
-	//balances, _ := internal.Balances("as:stocks")
+	accounts, _ := hledger.Accounts()
+	register := []hledger.RegisterEntry{}
+	//balances, _ := hledger.Balances("as:stocks")
 
 	index := templates.Index(accounts, register)
 	http.Handle("/", templ.Handler(index))
 
 	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		account := r.URL.Query().Get("account")
-		register, _ := internal.Register(account)
+		register, _ := hledger.Register(account)
 		templates.Register(register).Render(r.Context(), w)
 	})
 

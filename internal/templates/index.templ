@@ -1,8 +1,8 @@
 package templates
 
-import "github.com/seanmorton/hledger-webapp/internal"
+import "github.com/seanmorton/hledger-htmx/internal/hledger"
 
-templ Index(accounts []string, entries []internal.RegisterEntry) {
+templ Index(accounts []string, entries []hledger.RegisterEntry) {
 <html>
   <head>
     <script src="https://unpkg.com/htmx.org@1.9.2"
@@ -11,7 +11,6 @@ templ Index(accounts []string, entries []internal.RegisterEntry) {
     </script>
   </head>
   <body style="width:80%; margin:0 auto;">
-    <h1>I LOVE BOOBAH SHE HELPS ME DO THE BOOKS!!!</h1>
     <div id="accounts" style="float:left;">
         @Accounts(accounts)
     </div>
