@@ -7,7 +7,8 @@ import (
 	"strings"
 )
 
-// TODO use correct struct types
+// TODO use correct struct types (or not..if R/O)
+// TODO remove quotes from strings
 // TODO Make stuct service for dep injection
 // TODO properly escape csv, add comma back to commodity
 // TODO splice slices for csv headers

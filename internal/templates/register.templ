@@ -1,0 +1,17 @@
+package templates
+
+import "github.com/seanmorton/hledger-webapp/internal"
+
+templ Register(entries []internal.RegisterEntry) {
+  <table border="1">
+    <tbody>
+      for _, entry := range entries {
+        <tr>
+        <td>{ entry.Date }</td>
+        <td>{ entry.Description}</td>
+        <td>{ entry.Amount}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

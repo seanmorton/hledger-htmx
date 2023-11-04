@@ -1,0 +1,13 @@
+package templates
+
+func accountRegisterPath(account string) string {
+  return "/register?account=" + account
+}
+
+templ Accounts(accounts []string) {
+  <ul>
+    for _, account := range accounts {
+      <li hx-get={ accountRegisterPath(account) } hx-target="#register">{ account }</li>
+    }
+  </ul>
+}
