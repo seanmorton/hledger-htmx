@@ -1,0 +1,53 @@
+package templates
+
+import (
+"github.com/seanmorton/hledger-htmx/internal/hledger"
+)
+
+script graph(entries []hledger.BalanceEntry) {
+  const canvas = document.getElementById("balanceChart");
+  const labels = entries.map((e) => e.account);
+  const values = entries.map((e) => e.amount);
+  const colors = [
+    "#b91d47",
+    "#00aba9",
+    "#2b5797",
+    "#e8c3b9",
+    "#1e7145"
+  ];
+  const chart = new Chart(canvas, {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [{
+        backgroundColor: colors,
+        data: values
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: "boobah spending my money <3"
+      }
+    }
+  });
+  canvas.onclick = function(evt) {
+    var activePoints = chart.getElementsAtEvent(evt);
+    if (activePoints[0]) {
+      var chartData = activePoints[0]['_chart'].config.data;
+      var idx = activePoints[0]['_index'];
+
+      var label = chartData.labels[idx];
+      var value = chartData.datasets[0].data[idx];
+
+      var url = "http://example.com/?label=" + label + "&value=" + value;
+      console.log(url);
+      alert(url);
+    }
+  };
+}
+
+templ Balances(entries []hledger.BalanceEntry) {
+  <canvas id="balanceChart" style="width:100%;max-width:600px"></canvas>
+  @graph(entries)
+}

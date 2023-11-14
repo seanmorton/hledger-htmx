@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -15,8 +16,8 @@ import (
 // TODO Add start/end data params
 
 type BalanceEntry struct {
-	Account string
-	Amount  string
+	Account string  `json:"account"`
+	Amount  float64 `json:"amount"`
 }
 
 type RegisterEntry struct {
@@ -71,14 +72,18 @@ func parseAccounts(output string) []string {
 func parseBalances(csv string) []BalanceEntry {
 	entries := []BalanceEntry{}
 	rows := strings.Split(csv, "\n")
-	fmt.Println(csv)
 
 	for _, row := range rows {
 		data := strings.Split(row, ",")
 		if len(data) == 2 && data[0] != "\"account\"" && data[0] != "\"total\"" {
+			amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(data[1], "\"", ""), "$", ""), 64)
+			if err != nil {
+				fmt.Println(err)
+				return []BalanceEntry{}
+			}
 			entry := BalanceEntry{
 				Account: data[0],
-				Amount:  data[1],
+				Amount:  amount,
 			}
 			entries = append(entries, entry)
 		}

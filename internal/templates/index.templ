@@ -2,15 +2,20 @@ package templates
 
 import "github.com/seanmorton/hledger-htmx/internal/hledger"
 
-templ Index(accounts []string, entries []hledger.RegisterEntry) {
+templ Index(accounts []string, balances []hledger.BalanceEntry, entries []hledger.RegisterEntry) {
+<!DOCTYPE html>
 <html>
   <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.2"
             integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
             crossorigin="anonymous">
     </script>
   </head>
   <body style="width:80%; margin:0 auto;">
+    <div id="balances" style="float:left;">
+        @Balances(balances)
+    </div>
     <div id="accounts" style="float:left;">
         @Accounts(accounts)
     </div>

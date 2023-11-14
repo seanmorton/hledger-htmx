@@ -11,9 +11,9 @@ import (
 func main() {
 	accounts, _ := hledger.Accounts()
 	register := []hledger.RegisterEntry{}
-	//balances, _ := hledger.Balances("as:stocks")
+	balances, _ := hledger.Balances("li:cc")
 
-	index := templates.Index(accounts, register)
+	index := templates.Index(accounts, balances, register)
 	http.Handle("/", templ.Handler(index))
 
 	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
