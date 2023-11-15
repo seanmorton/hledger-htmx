@@ -36,12 +36,10 @@ script graph(entries []hledger.BalanceEntry) {
     if (activePoints[0]) {
       var chartData = activePoints[0]['_chart'].config.data;
       var idx = activePoints[0]['_index'];
-
       var account = chartData.labels[idx];
-      var accountSel = "#" + account.replaceAll(":", "")
-      //var value = chartData.datasets[0].data[idx];
-      //var url = "/register?account=" + account
-      htmx.trigger(accountSel, "click")
+      var accountRegisterUrl = "/register?account=" + account
+
+      htmx.ajax('GET', accountRegisterUrl, '#register')
     }
   };
 }

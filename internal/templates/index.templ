@@ -2,7 +2,7 @@ package templates
 
 import "github.com/seanmorton/hledger-htmx/internal/hledger"
 
-templ Index(accounts []string, balances []hledger.BalanceEntry, entries []hledger.RegisterEntry) {
+templ Index(balances []hledger.BalanceEntry, entries []hledger.RegisterEntry) {
 <!DOCTYPE html>
 <html>
   <head>
@@ -15,9 +15,6 @@ templ Index(accounts []string, balances []hledger.BalanceEntry, entries []hledge
   <body style="width:80%; margin:0 auto;">
     <div id="balances">
         @Balances(balances)
-    </div>
-    <div id="accounts" style="float:left;">
-        @Accounts(accounts)
     </div>
     <div id="register" style="float:right;">
         @Register(entries)
