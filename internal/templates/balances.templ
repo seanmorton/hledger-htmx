@@ -4,7 +4,7 @@ import (
 "github.com/seanmorton/hledger-htmx/internal/hledger"
 )
 
-script graph(entries []hledger.BalanceEntry) {
+script graphOld(entries []hledger.BalanceEntry) {
   const canvas = document.getElementById("balanceChart");
   const labels = entries.map((e) => e.account);
   const values = entries.map((e) => e.amount);
@@ -46,5 +46,5 @@ script graph(entries []hledger.BalanceEntry) {
 
 templ Balances(entries []hledger.BalanceEntry) {
   <canvas id="balanceChart" style="width:100%;max-width:800px"></canvas>
-  @graph(entries)
+  @graphOld(entries)
 }

@@ -37,7 +37,8 @@ func Accounts() ([]string, error) {
 }
 
 func Balances(acct string) ([]BalanceEntry, error) {
-	args := fmt.Sprintf("bal %s -O csv", acct)
+	depth := strings.Count(acct, ":") + 2
+	args := fmt.Sprintf("bal %s -%d -O csv", acct, depth)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err
