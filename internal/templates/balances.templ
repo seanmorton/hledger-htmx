@@ -27,7 +27,7 @@ script graph(entries []hledger.BalanceEntry) {
     options: {
       title: {
         display: true,
-        text: "boobah spending my money <3"
+        text: "Balances"
       }
     }
   });
@@ -37,17 +37,16 @@ script graph(entries []hledger.BalanceEntry) {
       var chartData = activePoints[0]['_chart'].config.data;
       var idx = activePoints[0]['_index'];
 
-      var label = chartData.labels[idx];
-      var value = chartData.datasets[0].data[idx];
-
-      var url = "http://example.com/?label=" + label + "&value=" + value;
-      console.log(url);
-      alert(url);
+      var account = chartData.labels[idx];
+      var accountSel = "#" + account.replaceAll(":", "")
+      //var value = chartData.datasets[0].data[idx];
+      //var url = "/register?account=" + account
+      htmx.trigger(accountSel, "click")
     }
   };
 }
 
 templ Balances(entries []hledger.BalanceEntry) {
-  <canvas id="balanceChart" style="width:100%;max-width:600px"></canvas>
+  <canvas id="balanceChart" style="width:100%;max-width:800px"></canvas>
   @graph(entries)
 }

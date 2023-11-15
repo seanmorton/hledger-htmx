@@ -16,8 +16,8 @@ import (
 
 func graph(entries []hledger.BalanceEntry) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_graph_61bf`,
-		Function: `function __templ_graph_61bf(entries){const canvas = document.getElementById("balanceChart");
+		Name: `__templ_graph_beca`,
+		Function: `function __templ_graph_beca(entries){const canvas = document.getElementById("balanceChart");
   const labels = entries.map((e) => e.account);
   const values = entries.map((e) => e.amount);
   const colors = [
@@ -39,7 +39,7 @@ func graph(entries []hledger.BalanceEntry) templ.ComponentScript {
     options: {
       title: {
         display: true,
-        text: "boobah spending my money <3"
+        text: "Balances"
       }
     }
   });
@@ -49,16 +49,15 @@ func graph(entries []hledger.BalanceEntry) templ.ComponentScript {
       var chartData = activePoints[0]['_chart'].config.data;
       var idx = activePoints[0]['_index'];
 
-      var label = chartData.labels[idx];
-      var value = chartData.datasets[0].data[idx];
-
-      var url = "http://example.com/?label=" + label + "&value=" + value;
-      console.log(url);
-      alert(url);
+      var account = chartData.labels[idx];
+      var accountSel = "#" + account.replaceAll(":", "")
+      //var value = chartData.datasets[0].data[idx];
+      //var url = "/register?account=" + account
+      htmx.trigger(accountSel, "click")
     }
   };}`,
-		Call:       templ.SafeScript(`__templ_graph_61bf`, entries),
-		CallInline: templ.SafeScriptInline(`__templ_graph_61bf`, entries),
+		Call:       templ.SafeScript(`__templ_graph_beca`, entries),
+		CallInline: templ.SafeScriptInline(`__templ_graph_beca`, entries),
 	}
 }
 
@@ -75,7 +74,7 @@ func Balances(entries []hledger.BalanceEntry) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<canvas id=\"balanceChart\" style=\"width:100%;max-width:600px\"></canvas>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<canvas id=\"balanceChart\" style=\"width:100%;max-width:800px\"></canvas>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

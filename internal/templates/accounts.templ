@@ -1,13 +1,19 @@
 package templates
 
+import "strings"
+
 func accountRegisterPath(account string) string {
   return "/register?account=" + account
 }
 
+func accountId(account string) string {
+  return strings.ReplaceAll(account, ":", "")
+}
+
 templ Accounts(accounts []string) {
-  <ul>
+  <ul style="display:none">
     for _, account := range accounts {
-      <li hx-get={ accountRegisterPath(account) } hx-target="#register">{ account }</li>
+      <li id={ accountId(account)  } hx-get={ accountRegisterPath(account) } hx-target="#register">{ account }</li>
     }
   </ul>
 }

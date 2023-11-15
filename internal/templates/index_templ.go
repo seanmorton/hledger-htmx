@@ -44,7 +44,7 @@ func Index(accounts []string, balances []hledger.BalanceEntry, entries []hledger
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script></head><body style=\"width:80%; margin:0 auto;\"><div id=\"balances\" style=\"float:left;\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script></head><body style=\"width:80%; margin:0 auto;\"><div id=\"balances\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

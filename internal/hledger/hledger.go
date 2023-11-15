@@ -82,7 +82,7 @@ func parseBalances(csv string) []BalanceEntry {
 				return []BalanceEntry{}
 			}
 			entry := BalanceEntry{
-				Account: data[0],
+				Account: strings.ReplaceAll(data[0], "\"", ""),
 				Amount:  amount,
 			}
 			entries = append(entries, entry)
