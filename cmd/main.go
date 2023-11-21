@@ -10,17 +10,18 @@ import (
 
 func main() {
 	//accounts, _ := hledger.Accounts()
-	balances, _ := hledger.Balances("xp:primary")
-	register, _ := hledger.Register("xp:primary")
+	defaultAccount := "xp:primary"
+	balances, _ := hledger.Balances(defaultAccount)
+	register, _ := hledger.Register(defaultAccount)
 
-	index := templates.Index(balances, register)
+	index := templates.Index(defaultAccount, balances, register)
 	http.Handle("/", templ.Handler(index))
 
 	http.HandleFunc("/expenses", func(w http.ResponseWriter, r *http.Request) {
 		account := r.URL.Query().Get("account")
 		balances, _ := hledger.Balances(account)
 		register, _ := hledger.Register(account)
-		templates.Expenses(balances, register).Render(r.Context(), w)
+		templates.Expenses(account, balances, register).Render(r.Context(), w)
 	})
 
 	http.ListenAndServe(":8080", nil)

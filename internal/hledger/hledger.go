@@ -38,7 +38,7 @@ func Accounts() ([]string, error) {
 
 func Balances(acct string) ([]BalanceEntry, error) {
 	depth := strings.Count(acct, ":") + 2
-	args := fmt.Sprintf("bal %s -%d -O csv", acct, depth)
+	args := fmt.Sprintf("bal %s -%d -b 2023-10-16 -O csv", acct, depth)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func Balances(acct string) ([]BalanceEntry, error) {
 }
 
 func Register(acct string) ([]RegisterEntry, error) {
-	args := fmt.Sprintf("register %s -b 2023-09-16 -O csv", acct)
+	args := fmt.Sprintf("register %s -b 2023-10-16 -O csv", acct)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err

@@ -1,0 +1,75 @@
+package templates
+
+import (
+"github.com/seanmorton/hledger-htmx/internal/hledger"
+)
+
+
+templ Expenses(currentAccount string, balanceEntries []hledger.BalanceEntry, registerEntries []hledger.RegisterEntry) {
+  <div style="float:left; width: 600px; height: 600px;">
+    <canvas id="balanceChart" width="600px" height="600px"></canvas>
+  </div>
+  <table border="1" style="float:right;">
+    <tbody>
+      for _, entry := range registerEntries {
+        <tr>
+        <td>{ entry.Date }</td>
+        <td>{ entry.Description}</td>
+        <td>{ entry.Amount}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @graph(balanceEntries)
+  <div id="currentAccount" style="display:none;">{ currentAccount }</div>
+}
+
+script graph(entries []hledger.BalanceEntry) {
+  const canvas = document.getElementById("balanceChart");
+  const labels = entries.map((e) => e.account);
+  const values = entries.map((e) => e.amount);
+  const colors = [
+    "#b91d47",
+    "#00aba9",
+    "#2b5797",
+    "#e8c3b9",
+    "#1e7145"
+  ];
+  const chart = new Chart(canvas, {
+    type: "doughnut",
+    data: {
+      labels: labels,
+      datasets: [{
+        backgroundColor: colors,
+        data: values
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: "Balances"
+      },
+      legend: {
+        display: true
+      }
+    }
+  });
+  canvas.onclick = function(evt) {
+    var account
+    var activePoints = chart.getElementsAtEvent(evt);
+    if (activePoints[0]) {
+      var chartData = activePoints[0]['_chart'].config.data;
+      var idx = activePoints[0]['_index'];
+      account = chartData.labels[idx];
+    } else {
+      account = document.getElementById("currentAccount").innerHTML;
+      account = account.split(":").slice(0,-1).join(":");
+    }
+    var accountExpensesUrl = "/expenses?account=" + account;
+    console.log(account)
+
+    htmx.ajax('GET', accountExpensesUrl, '#expenses');
+  };
+}
+
