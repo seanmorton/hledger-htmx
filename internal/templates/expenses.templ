@@ -21,11 +21,11 @@ templ Expenses(currentAccount string, balanceEntries []hledger.BalanceEntry, reg
     </tbody>
   </table>
 
-  @graph(balanceEntries)
+  @graph(currentAccount, balanceEntries)
   <div id="currentAccount" style="display:none;">{ currentAccount }</div>
 }
 
-script graph(entries []hledger.BalanceEntry) {
+script graph(currentAccount string, entries []hledger.BalanceEntry) {
   const canvas = document.getElementById("balanceChart");
   const labels = entries.map((e) => e.account);
   const values = entries.map((e) => e.amount);
@@ -48,11 +48,11 @@ script graph(entries []hledger.BalanceEntry) {
     options: {
       title: {
         display: true,
-        text: "Balances"
+        text: "Balances for " + currentAccount
       },
       legend: {
         display: true
-      }
+      },
     }
   });
   canvas.onclick = function(evt) {
@@ -64,11 +64,13 @@ script graph(entries []hledger.BalanceEntry) {
       account = chartData.labels[idx];
     } else {
       account = document.getElementById("currentAccount").innerHTML;
+      accountParts = account.split(":")
+      if (accountParts.length == 1 || accountParts[1] == "") {
+        return;
+      }
       account = account.split(":").slice(0,-1).join(":");
     }
     var accountExpensesUrl = "/expenses?account=" + account;
-    console.log(account)
-
     htmx.ajax('GET', accountExpensesUrl, '#expenses');
   };
 }

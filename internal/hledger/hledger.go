@@ -38,6 +38,10 @@ func Accounts() ([]string, error) {
 
 func Balances(acct string) ([]BalanceEntry, error) {
 	depth := strings.Count(acct, ":") + 2
+	// If showing a root account, add a colon to avoid pulling in unintended accounts
+	if depth == 2 {
+		acct += ":"
+	}
 	args := fmt.Sprintf("bal %s -%d -b 2023-10-16 -O csv", acct, depth)
 	csvOutput, err := hledger(args)
 	if err != nil {
@@ -47,6 +51,10 @@ func Balances(acct string) ([]BalanceEntry, error) {
 }
 
 func Register(acct string) ([]RegisterEntry, error) {
+	// If showing a root account, add a colon to avoid pulling in unintended accounts
+	if strings.Count(acct, ":") == 0 {
+		acct += ":"
+	}
 	args := fmt.Sprintf("register %s -b 2023-10-16 -O csv", acct)
 	csvOutput, err := hledger(args)
 	if err != nil {

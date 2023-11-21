@@ -9,8 +9,7 @@ import (
 )
 
 func main() {
-	//accounts, _ := hledger.Accounts()
-	defaultAccount := "xp:primary"
+	defaultAccount := "xp"
 	balances, _ := hledger.Balances(defaultAccount)
 	register, _ := hledger.Register(defaultAccount)
 
