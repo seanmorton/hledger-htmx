@@ -6,10 +6,10 @@ import (
 
 
 templ Expenses(currentAccount string, balanceEntries []hledger.BalanceEntry, registerEntries []hledger.RegisterEntry) {
-  <div style="float:left; width: 600px; height: 600px;">
+  <div style="width: 600px; height: 600px;">
     <canvas id="balanceChart" width="600px" height="600px"></canvas>
   </div>
-  <table border="1" style="float:right;">
+  <table>
     <tbody>
       for _, entry := range registerEntries {
         <tr>
@@ -30,11 +30,9 @@ script graph(currentAccount string, entries []hledger.BalanceEntry) {
   const labels = entries.map((e) => e.account);
   const values = entries.map((e) => e.amount);
   const colors = [
-    "#b91d47",
-    "#00aba9",
-    "#2b5797",
-    "#e8c3b9",
-    "#1e7145"
+    "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
+    "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
+    "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"
   ];
   const chart = new Chart(canvas, {
     type: "doughnut",

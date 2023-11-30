@@ -1,12 +1,16 @@
 package main
 
 import (
+	"embed"
 	"net/http"
 
 	"github.com/a-h/templ"
 	"github.com/seanmorton/hledger-htmx/internal/hledger"
 	"github.com/seanmorton/hledger-htmx/internal/templates"
 )
+
+//go:embed css
+var FS embed.FS
 
 func main() {
 	defaultAccount := "xp"
@@ -22,6 +26,8 @@ func main() {
 		register, _ := hledger.Register(account)
 		templates.Expenses(account, balances, register).Render(r.Context(), w)
 	})
+
+	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(FS))))
 
 	http.ListenAndServe(":8080", nil)
 }
