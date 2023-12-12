@@ -14,17 +14,21 @@ var FS embed.FS
 
 func main() {
 	defaultAccount := "xp"
-	balances, _ := hledger.Balances(defaultAccount)
-	register, _ := hledger.Register(defaultAccount)
+	balances, _ := hledger.Balances(defaultAccount, "2023-11-15", "2023-11-30")
+	register, _ := hledger.Register(defaultAccount, "2023-11-15", "2023-11-30")
 
 	index := templates.Index(defaultAccount, balances, register)
 	http.Handle("/", templ.Handler(index))
 
 	http.HandleFunc("/expenses", func(w http.ResponseWriter, r *http.Request) {
 		account := r.URL.Query().Get("account")
-		balances, _ := hledger.Balances(account)
-		register, _ := hledger.Register(account)
-		templates.Expenses(account, balances, register).Render(r.Context(), w)
+		from := r.URL.Query().Get("from")
+		to := r.URL.Query().Get("to")
+
+		balances, _ := hledger.Balances(account, from, to)
+		register, _ := hledger.Register(account, from, to)
+
+		templates.Expenses(account, from, to, balances, register).Render(r.Context(), w)
 	})
 
 	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(FS))))

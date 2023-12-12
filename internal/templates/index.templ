@@ -15,7 +15,7 @@ templ Index(currentAccount string, balanceEntries []hledger.BalanceEntry, regist
   </head>
   <body style="width:90%; margin:0 auto;">
     <div id="expenses" class="bg-gray-100">
-        @Expenses(currentAccount, balanceEntries, registerEntries)
+        @Expenses(currentAccount, "2023-11-15", "2023-11-30", balanceEntries, registerEntries)
     </div>
   </body>
 </html>

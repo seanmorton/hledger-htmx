@@ -4,8 +4,15 @@ import (
 "github.com/seanmorton/hledger-htmx/internal/hledger"
 )
 
+templ Expenses(currentAccount, from, to string, balanceEntries []hledger.BalanceEntry, registerEntries []hledger.RegisterEntry) {
+  <form id="dateSelect" hx-get="/expenses" hx-target="#expenses" hx-trigger="change from:#dateSelect>input">
+    <label>From</label>
+    <input type="date" name="from" value={ from } />
+    <label>To</label>
+    <input type="date" name="to" value={ to } />
+    <input id="currentAccount" name="account" type="hidden" value={ currentAccount } />
+  </form>
 
-templ Expenses(currentAccount string, balanceEntries []hledger.BalanceEntry, registerEntries []hledger.RegisterEntry) {
   <div style="width: 600px; height: 600px;">
     <canvas id="balanceChart" width="600px" height="600px"></canvas>
   </div>
@@ -14,19 +21,19 @@ templ Expenses(currentAccount string, balanceEntries []hledger.BalanceEntry, reg
       for _, entry := range registerEntries {
         <tr>
         <td>{ entry.Date }</td>
-        <td>{ entry.Description}</td>
-        <td>{ entry.Amount}</td>
+        <td>{ entry.Description }</td>
+        <td>{ entry.Amount }</td>
+        <td>{ entry.Total }</td>
         </tr>
       }
     </tbody>
   </table>
 
   @graph(currentAccount, balanceEntries)
-  <div id="currentAccount" style="display:none;">{ currentAccount }</div>
 }
 
 script graph(currentAccount string, entries []hledger.BalanceEntry) {
-  const canvas = document.getElementById("balanceChart");
+  const canvas = htmx.find("#balanceChart");
   const labels = entries.map((e) => e.account);
   const values = entries.map((e) => e.amount);
   const colors = [
@@ -61,15 +68,18 @@ script graph(currentAccount string, entries []hledger.BalanceEntry) {
       var idx = activePoints[0]['_index'];
       account = chartData.labels[idx];
     } else {
-      account = document.getElementById("currentAccount").innerHTML;
+      account = htmx.find("#currentAccount").value;
       accountParts = account.split(":")
       if (accountParts.length == 1 || accountParts[1] == "") {
         return;
       }
       account = account.split(":").slice(0,-1).join(":");
     }
-    var accountExpensesUrl = "/expenses?account=" + account;
-    htmx.ajax('GET', accountExpensesUrl, '#expenses');
+    currentAccount = htmx.find("#currentAccount");
+    currentAccount.value = account;
+    currentAccount.dispatchEvent(new Event('change'));
+    //var accountExpensesUrl = "/expenses?account=" + account;
+    //htmx.ajax('GET', accountExpensesUrl, '#expenses');
   };
 }
 

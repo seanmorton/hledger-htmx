@@ -9,11 +9,8 @@ import (
 )
 
 // TODO use correct struct types (or not..if R/O)
-// TODO remove quotes from strings
-// TODO Make stuct service for dep injection
 // TODO properly escape csv, add comma back to commodity
 // TODO splice slices for csv headers
-// TODO Add start/end data params
 
 type BalanceEntry struct {
 	Account string  `json:"account"`
@@ -36,13 +33,13 @@ func Accounts() ([]string, error) {
 	return parseAccounts(output), nil
 }
 
-func Balances(acct string) ([]BalanceEntry, error) {
+func Balances(acct string, to, from string) ([]BalanceEntry, error) {
 	depth := strings.Count(acct, ":") + 2
 	// If showing a root account, add a colon to avoid pulling in unintended accounts
 	if depth == 2 {
 		acct += ":"
 	}
-	args := fmt.Sprintf("bal %s -%d -b 2023-10-16 -O csv", acct, depth)
+	args := fmt.Sprintf("bal %s -%d -b %s -e %s -O csv", acct, depth, to, from)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err
@@ -50,12 +47,12 @@ func Balances(acct string) ([]BalanceEntry, error) {
 	return parseBalances(csvOutput), nil
 }
 
-func Register(acct string) ([]RegisterEntry, error) {
+func Register(acct string, to, from string) ([]RegisterEntry, error) {
 	// If showing a root account, add a colon to avoid pulling in unintended accounts
 	if strings.Count(acct, ":") == 0 {
 		acct += ":"
 	}
-	args := fmt.Sprintf("register %s -b 2023-10-16 -O csv", acct)
+	args := fmt.Sprintf("register %s -b %s -e %s -O csv", acct, to, from)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err
@@ -108,11 +105,11 @@ func parseRegister(csv string) []RegisterEntry {
 		data := strings.Split(row, ",")
 		if len(data) == 7 && data[0] != "\"txnidx\"" {
 			entry := RegisterEntry{
-				Amount:      data[5],
-				Account:     data[4],
-				Date:        data[1],
-				Description: data[3],
-				Total:       data[6],
+				Amount:      strings.ReplaceAll(data[5], "\"", ""),
+				Account:     strings.ReplaceAll(data[4], "\"", ""),
+				Date:        strings.ReplaceAll(data[1], "\"", ""),
+				Description: strings.ReplaceAll(data[3], "\"", ""),
+				Total:       strings.ReplaceAll(data[6], "\"", ""),
 			}
 			entries = append(entries, entry)
 		}
