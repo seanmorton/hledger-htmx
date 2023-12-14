@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -114,5 +115,6 @@ func parseRegister(csv string) []RegisterEntry {
 			entries = append(entries, entry)
 		}
 	}
+	slices.Reverse(entries)
 	return entries
 }
