@@ -95,6 +95,7 @@ func parseBalances(csv string) []BalanceEntry {
 			entries = append(entries, entry)
 		}
 	}
+	slices.Reverse(entries)
 	return entries
 }
 
