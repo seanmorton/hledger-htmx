@@ -77,9 +77,7 @@ script graph(currentAccount string, entries []hledger.BalanceEntry) {
     }
     currentAccount = htmx.find("#currentAccount");
     currentAccount.value = account;
-    currentAccount.dispatchEvent(new Event('change'));
-    //var accountExpensesUrl = "/expenses?account=" + account;
-    //htmx.ajax('GET', accountExpensesUrl, '#expenses');
+    currentAccount.dispatchEvent(new Event("change"));
   };
 }
 
