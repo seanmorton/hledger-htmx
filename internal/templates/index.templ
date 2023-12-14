@@ -13,8 +13,8 @@ templ Index(currentAccount, from, to string, balanceEntries []hledger.BalanceEnt
             crossorigin="anonymous">
     </script>
   </head>
-  <body style="width:90%; margin:0 auto;">
-    <div id="expenses" class="bg-gray-100">
+  <body style="width:90%; margin:0 auto;" class="bg-gray-200">
+    <div id="expenses" class="bg-gray-200">
         @Expenses(currentAccount, from, to, balanceEntries, registerEntries)
     </div>
   </body>

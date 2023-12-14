@@ -39,7 +39,7 @@ func Balances(acct string, to, from string) ([]BalanceEntry, error) {
 	if depth == 2 {
 		acct += ":"
 	}
-	args := fmt.Sprintf("bal %s -%d -b %s -e %s -O csv", acct, depth, to, from)
+	args := fmt.Sprintf("bal %s -%d -b %s -e %s -S -O csv", acct, depth, to, from)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err

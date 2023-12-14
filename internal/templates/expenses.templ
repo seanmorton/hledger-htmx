@@ -36,10 +36,23 @@ script graph(currentAccount string, entries []hledger.BalanceEntry) {
   const canvas = htmx.find("#balanceChart");
   const labels = entries.map((e) => e.account);
   const values = entries.map((e) => e.amount);
+  //  Color Palette by Paletton.com
+  //  http://paletton.com/#uid=74H180kt+lZlOstrKqzzSiaJidt
   const colors = [
-    "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
-    "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
-    "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"
+   "#D4481C",
+   "#D4D41C",
+   "#149453",
+   "#64198D",
+
+   "#E36D48",
+   "#E3E348",
+   "#339F68",
+   "#753697",
+
+   "#AF320B",
+   "#AFAF0B",
+   "#087B40",
+   "#500D75",
   ];
   const chart = new Chart(canvas, {
     type: "doughnut",
