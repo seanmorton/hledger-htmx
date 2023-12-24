@@ -22,13 +22,16 @@ templ Budget(from, to string, items []hledger.BudgetItem) {
     </thead>
     <tbody>
       for _, item := range items {
-        <tr>
-          <td hx-get={ fmt.Sprintf("expenses?from=%s&to=%s&account=%s", from, to, item.Account) } hx-target="main" hx-push-url="true">{ item.Account }</td>
-          <td>{ fmt.Sprintf("%f", item.Remaining) }</td>
+        <tr hx-get={ fmt.Sprintf("/register?from=%s&to=%s&account=%s", from, to, item.Account) } hx-target="#budgetRegister">
+          <td>{ item.Account }</td>
+          <td>{ fmt.Sprintf("%f", item.Remaining()) }</td>
           <td>{ fmt.Sprintf("%f", item.Target) }</td>
         </tr>
       }
     </tbody>
   </table>
+  <hr />
+  <div id="budgetRegister">
+  </div>
 }
 

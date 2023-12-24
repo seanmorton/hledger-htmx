@@ -34,9 +34,13 @@ type RegisterEntry struct {
 }
 
 type BudgetItem struct {
-	Account   string  `json:"account"`
-	Target    float64 `json:"target"`
-	Remaining float64 `json:"remaining"`
+	Account string  `json:"account"`
+	Target  float64 `json:"target"`
+	Spent   float64 `json:"spent"`
+}
+
+func (b *BudgetItem) Remaining() float64 {
+	return b.Target - b.Spent
 }
 
 func Balances(acct string, from, to string, depth int) (Balance, error) {
@@ -72,7 +76,7 @@ func Budget(from, to string) ([]BudgetItem, error) {
 
 	for i, item := range items {
 		balance, _ := Balances(item.Account, from, to, 0)
-		item.Remaining = item.Target - balance.Total
+		item.Spent = balance.Total
 		items[i] = item
 	}
 	return items, nil

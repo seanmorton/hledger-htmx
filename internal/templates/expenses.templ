@@ -14,18 +14,7 @@ templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledg
   <div style="width: 600px; height: 600px;">
     <canvas id="balanceChart" width="600px" height="600px"></canvas>
   </div>
-  <table>
-    <tbody>
-      for _, entry := range registerEntries {
-        <tr>
-          <td>{ entry.Date }</td>
-          <td>{ entry.Description }</td>
-          <td>{ entry.Amount }</td>
-          <td>{ entry.Total }</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+  @Register(from, to, registerEntries)
 
   @graph(balance)
 }

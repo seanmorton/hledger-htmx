@@ -49,6 +49,17 @@ func main() {
 		render(w, r, templates.Expenses(from, to, balances, register))
 	})
 
+	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		acct := r.URL.Query().Get("account")
+		from := r.URL.Query().Get("from")
+		to := r.URL.Query().Get("to")
+		if from == "" || to == "" {
+			from, to = defaultDateRange()
+		}
+		register, _ := hledger.Register(acct, from, to)
+
+		render(w, r, templates.Register(from, to, register))
+	})
 	http.ListenAndServe(":8080", nil)
 }
 
