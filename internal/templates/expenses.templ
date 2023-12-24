@@ -1,8 +1,6 @@
 package templates
 
-import (
-"github.com/seanmorton/hledger-htmx/internal/hledger"
-)
+import "github.com/seanmorton/hledger-htmx/internal/hledger"
 
 templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledger.RegisterEntry) {
   <form id="dateSelect" hx-get="/expenses" hx-target="main" hx-trigger="change from:#dateSelect>input" hx-push-url="true">
@@ -20,10 +18,10 @@ templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledg
     <tbody>
       for _, entry := range registerEntries {
         <tr>
-        <td>{ entry.Date }</td>
-        <td>{ entry.Description }</td>
-        <td>{ entry.Amount }</td>
-        <td>{ entry.Total }</td>
+          <td>{ entry.Date }</td>
+          <td>{ entry.Description }</td>
+          <td>{ entry.Amount }</td>
+          <td>{ entry.Total }</td>
         </tr>
       }
     </tbody>

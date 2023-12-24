@@ -3,15 +3,16 @@ package hledger
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os/exec"
 	"slices"
 	"strconv"
 	"strings"
+
+	"encoding/json"
 )
 
-// TODO use correct struct types (or not..if R/O)
-// TODO properly escape csv, add comma back to commodity
-// TODO splice slices for csv headers
+// TODO properly escape csv, add comma back to commodity (or upgrade hledger)
 
 type Balance struct {
 	Account string         `json:"account"`
@@ -32,20 +33,19 @@ type RegisterEntry struct {
 	Total       string
 }
 
-func Accounts() ([]string, error) {
-	output, err := hledger("accounts")
-	if err != nil {
-		return nil, err
-	}
-	return parseAccounts(output), nil
+type BudgetItem struct {
+	Account   string  `json:"account"`
+	Target    float64 `json:"target"`
+	Remaining float64 `json:"remaining"`
 }
 
-func Balances(acct string, to, from string, depth int) (Balance, error) {
-	// If showing a root account, add a colon to avoid pulling in unintended accounts
-	if strings.Count(acct, ":") == 0 {
-		acct += ":"
+func Balances(acct string, from, to string, depth int) (Balance, error) {
+	var args string
+	if depth > 0 {
+		args = fmt.Sprintf("bal %s -%d -b %s -e %s -S -O csv", acct, depth, from, to)
+	} else {
+		args = fmt.Sprintf("bal %s -b %s -e %s -S -O csv", acct, from, to)
 	}
-	args := fmt.Sprintf("bal %s -%d -b %s -e %s -S -O csv", acct, depth, to, from)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return Balance{}, err
@@ -54,16 +54,28 @@ func Balances(acct string, to, from string, depth int) (Balance, error) {
 }
 
 func Register(acct string, to, from string) ([]RegisterEntry, error) {
-	// If showing a root account, add a colon to avoid pulling in unintended accounts
-	if strings.Count(acct, ":") == 0 {
-		acct += ":"
-	}
 	args := fmt.Sprintf("register %s -b %s -e %s -O csv", acct, to, from)
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err
 	}
 	return parseRegister(csvOutput), nil
+}
+
+func Budget(from, to string) ([]BudgetItem, error) {
+	content, _ := ioutil.ReadFile("./budget.json") // TODO configure path
+	items := []BudgetItem{}
+	err := json.Unmarshal(content, &items)
+	if err != nil {
+		return nil, err
+	}
+
+	for i, item := range items {
+		balance, _ := Balances(item.Account, from, to, 0)
+		item.Remaining = item.Target - balance.Total
+		items[i] = item
+	}
+	return items, nil
 }
 
 func hledger(args string) (string, error) {
@@ -74,11 +86,6 @@ func hledger(args string) (string, error) {
 	}
 	buf := bytes.NewBuffer(out)
 	return buf.String(), nil
-}
-
-func parseAccounts(output string) []string {
-	rows := strings.Split(output, "\n")
-	return rows
 }
 
 func parseBalances(acct, csv string) Balance {

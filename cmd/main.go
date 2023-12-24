@@ -14,6 +14,7 @@ import (
 //go:embed css
 var FS embed.FS
 
+// TODO error handling
 func main() {
 	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(FS))))
 
@@ -21,21 +22,27 @@ func main() {
 		http.Redirect(w, r, "/budget", http.StatusFound)
 	})
 
+	// TODO add from/to params, (readonly cal with prev/next)
 	http.HandleFunc("/budget", func(w http.ResponseWriter, r *http.Request) {
-		render(w, r, templates.Budget())
+		from, to := defaultDateRange()
+		items, _ := hledger.Budget(from, to)
+		render(w, r, templates.Budget(from, to, items))
 	})
 
 	http.HandleFunc("/expenses", func(w http.ResponseWriter, r *http.Request) {
 		acct := r.URL.Query().Get("account")
-		if acct == "" {
-			acct = "xp"
+		var depth int
+		if acct == "" || acct == "xp" || acct == "xp:" {
+			acct = "xp:"
+			depth = 2
+		} else {
+			depth = len(strings.Split(acct, ":")) + 1
 		}
 		from := r.URL.Query().Get("from")
 		to := r.URL.Query().Get("to")
 		if from == "" || to == "" {
 			from, to = defaultDateRange()
 		}
-		depth := strings.Count(acct, ":") + 2
 		balances, _ := hledger.Balances(acct, from, to, depth)
 		register, _ := hledger.Register(acct, from, to)
 

@@ -1,6 +1,34 @@
 package templates
 
-templ Budget() {
-  <h1>TODO</h1>
+import (
+  "fmt"
+  "github.com/seanmorton/hledger-htmx/internal/hledger"
+)
+
+templ Budget(from, to string, items []hledger.BudgetItem) {
+  <form id="dateSelect" hx-get="/budget" hx-target="main" hx-trigger="change from:#dateSelect>input" hx-push-url="true">
+    <label>From</label>
+    <input type="date" name="from" value={ from } />
+    <label>To</label>
+    <input type="date" name="to" value={ to } />
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <th>Account</th>
+        <th>Remaining</th>
+        <th>Target</th>
+      </tr>
+    </thead>
+    <tbody>
+      for _, item := range items {
+        <tr>
+          <td hx-get={ fmt.Sprintf("expenses?from=%s&to=%s&account=%s", from, to, item.Account) } hx-target="main" hx-push-url="true">{ item.Account }</td>
+          <td>{ fmt.Sprintf("%f", item.Remaining) }</td>
+          <td>{ fmt.Sprintf("%f", item.Target) }</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 }
 
