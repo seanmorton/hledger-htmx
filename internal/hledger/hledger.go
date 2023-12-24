@@ -13,6 +13,12 @@ import (
 // TODO properly escape csv, add comma back to commodity
 // TODO splice slices for csv headers
 
+type Balance struct {
+	Account string         `json:"account"`
+	Total   float64        `json:"total"`
+	Entries []BalanceEntry `json:"entries"`
+}
+
 type BalanceEntry struct {
 	Account string  `json:"account"`
 	Amount  float64 `json:"amount"`
@@ -34,18 +40,17 @@ func Accounts() ([]string, error) {
 	return parseAccounts(output), nil
 }
 
-func Balances(acct string, to, from string) ([]BalanceEntry, error) {
-	depth := strings.Count(acct, ":") + 2
+func Balances(acct string, to, from string, depth int) (Balance, error) {
 	// If showing a root account, add a colon to avoid pulling in unintended accounts
-	if depth == 2 {
+	if strings.Count(acct, ":") == 0 {
 		acct += ":"
 	}
 	args := fmt.Sprintf("bal %s -%d -b %s -e %s -S -O csv", acct, depth, to, from)
 	csvOutput, err := hledger(args)
 	if err != nil {
-		return nil, err
+		return Balance{}, err
 	}
-	return parseBalances(csvOutput), nil
+	return parseBalances(acct, csvOutput), nil
 }
 
 func Register(acct string, to, from string) ([]RegisterEntry, error) {
@@ -76,17 +81,18 @@ func parseAccounts(output string) []string {
 	return rows
 }
 
-func parseBalances(csv string) []BalanceEntry {
+func parseBalances(acct, csv string) Balance {
+	var total float64
 	entries := []BalanceEntry{}
 	rows := strings.Split(csv, "\n")
 
 	for _, row := range rows {
 		data := strings.Split(row, ",")
-		if len(data) == 2 && data[0] != "\"account\"" && data[0] != "\"total\"" {
-			amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(data[1], "\"", ""), "$", ""), 64)
-			if err != nil {
-				fmt.Println(err)
-				return []BalanceEntry{}
+		if len(data) == 2 && data[0] != "\"account\"" { // Skip header
+			amount, _ := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(data[1], "\"", ""), "$", ""), 64)
+			if data[0] == "\"total\"" {
+				total = amount
+				continue
 			}
 			entry := BalanceEntry{
 				Account: strings.ReplaceAll(data[0], "\"", ""),
@@ -95,7 +101,12 @@ func parseBalances(csv string) []BalanceEntry {
 			entries = append(entries, entry)
 		}
 	}
-	return entries
+
+	return Balance{
+		Account: acct,
+		Total:   total,
+		Entries: entries,
+	}
 }
 
 func parseRegister(csv string) []RegisterEntry {

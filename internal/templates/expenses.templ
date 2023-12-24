@@ -4,13 +4,13 @@ import (
 "github.com/seanmorton/hledger-htmx/internal/hledger"
 )
 
-templ Expenses(currentAccount, from, to string, balanceEntries []hledger.BalanceEntry, registerEntries []hledger.RegisterEntry) {
+templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledger.RegisterEntry) {
   <form id="dateSelect" hx-get="/expenses" hx-target="main" hx-trigger="change from:#dateSelect>input" hx-push-url="true">
     <label>From</label>
     <input type="date" name="from" value={ from } />
     <label>To</label>
     <input type="date" name="to" value={ to } />
-    <input id="currentAccount" name="account" type="hidden" value={ currentAccount } />
+    <input id="currentAccount" name="account" type="hidden" value={ balance.Account } />
   </form>
 
   <div style="width: 600px; height: 600px;">
@@ -29,13 +29,13 @@ templ Expenses(currentAccount, from, to string, balanceEntries []hledger.Balance
     </tbody>
   </table>
 
-  @graph(currentAccount, balanceEntries)
+  @graph(balance)
 }
 
-script graph(currentAccount string, entries []hledger.BalanceEntry) {
+script graph(balance hledger.Balance) {
   const canvas = htmx.find("#balanceChart");
-  const labels = entries.map((e) => e.account);
-  const values = entries.map((e) => e.amount);
+  const labels = balance.entries.map((e) => e.account);
+  const values = balance.entries.map((e) => e.amount);
   //  Color Palette by Paletton.com
   //  http://paletton.com/#uid=74H180kt+lZlOstrKqzzSiaJidt
   const colors = [
@@ -66,7 +66,7 @@ script graph(currentAccount string, entries []hledger.BalanceEntry) {
     options: {
       title: {
         display: true,
-        text: "Balances for " + currentAccount
+        text: "Balances for " + balance.account
       },
       legend: {
         display: true

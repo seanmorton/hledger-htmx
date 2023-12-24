@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/a-h/templ"
@@ -25,19 +26,20 @@ func main() {
 	})
 
 	http.HandleFunc("/expenses", func(w http.ResponseWriter, r *http.Request) {
-		account := r.URL.Query().Get("account")
-		if account == "" {
-			account = "xp"
+		acct := r.URL.Query().Get("account")
+		if acct == "" {
+			acct = "xp"
 		}
 		from := r.URL.Query().Get("from")
 		to := r.URL.Query().Get("to")
 		if from == "" || to == "" {
 			from, to = defaultDateRange()
 		}
-		balances, _ := hledger.Balances(account, from, to)
-		register, _ := hledger.Register(account, from, to)
+		depth := strings.Count(acct, ":") + 2
+		balances, _ := hledger.Balances(acct, from, to, depth)
+		register, _ := hledger.Register(acct, from, to)
 
-		render(w, r, templates.Expenses(account, from, to, balances, register))
+		render(w, r, templates.Expenses(from, to, balances, register))
 	})
 
 	http.ListenAndServe(":8080", nil)
