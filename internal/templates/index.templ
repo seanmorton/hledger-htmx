@@ -1,22 +1,26 @@
 package templates
 
-import "github.com/seanmorton/hledger-htmx/internal/hledger"
-
-templ Index(currentAccount, from, to string, balanceEntries []hledger.BalanceEntry, registerEntries []hledger.RegisterEntry) {
-<!DOCTYPE html>
-<html>
-  <head>
-    <head><link rel="stylesheet" href="/public/css/styles.css"/></head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.2"
-            integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
-            crossorigin="anonymous">
-    </script>
-  </head>
-  <body style="width:90%; margin:0 auto;" class="bg-gray-200">
-    <div id="expenses" class="bg-gray-200">
-        @Expenses(currentAccount, from, to, balanceEntries, registerEntries)
-    </div>
-  </body>
-</html>
+templ Index(content templ.Component) {
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <head><link rel="stylesheet" href="/public/css/styles.css"/></head>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+      <script src="https://unpkg.com/htmx.org@1.9.2"
+              integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
+              crossorigin="anonymous">
+      </script>
+    </head>
+    <body style="width:90%; margin:0 auto;" class="bg-gray-200">
+      <nav>
+        <ul>
+          <li><a hx-get="/budget" hx-target="main" hx-push-url="true">Budget</a></li>
+          <li><a hx-get="/expenses" hx-target="main" hx-push-url="true">Expenses</a></li>
+        </ul>
+      </nav>
+      <main class="bg-gray-200">
+        @content
+      </main>
+    </body>
+  </html>
 }

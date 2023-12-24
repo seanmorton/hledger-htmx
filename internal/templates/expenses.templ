@@ -5,7 +5,7 @@ import (
 )
 
 templ Expenses(currentAccount, from, to string, balanceEntries []hledger.BalanceEntry, registerEntries []hledger.RegisterEntry) {
-  <form id="dateSelect" hx-get="/expenses" hx-target="#expenses" hx-trigger="change from:#dateSelect>input">
+  <form id="dateSelect" hx-get="/expenses" hx-target="main" hx-trigger="change from:#dateSelect>input" hx-push-url="true">
     <label>From</label>
     <input type="date" name="from" value={ from } />
     <label>To</label>

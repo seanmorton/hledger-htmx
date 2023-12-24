@@ -14,28 +14,41 @@ import (
 var FS embed.FS
 
 func main() {
-	defaultAccount := "xp"
-	defaultFrom, defaultTo := defaultDateRange()
-	balances, _ := hledger.Balances(defaultAccount, defaultFrom, defaultTo)
-	register, _ := hledger.Register(defaultAccount, defaultFrom, defaultTo)
+	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(FS))))
 
-	index := templates.Index(defaultAccount, defaultFrom, defaultTo, balances, register)
-	http.Handle("/", templ.Handler(index))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/budget", http.StatusFound)
+	})
+
+	http.HandleFunc("/budget", func(w http.ResponseWriter, r *http.Request) {
+		render(w, r, templates.Budget())
+	})
 
 	http.HandleFunc("/expenses", func(w http.ResponseWriter, r *http.Request) {
 		account := r.URL.Query().Get("account")
+		if account == "" {
+			account = "xp"
+		}
 		from := r.URL.Query().Get("from")
 		to := r.URL.Query().Get("to")
-
+		if from == "" || to == "" {
+			from, to = defaultDateRange()
+		}
 		balances, _ := hledger.Balances(account, from, to)
 		register, _ := hledger.Register(account, from, to)
 
-		templates.Expenses(account, from, to, balances, register).Render(r.Context(), w)
+		render(w, r, templates.Expenses(account, from, to, balances, register))
 	})
 
-	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(FS))))
-
 	http.ListenAndServe(":8080", nil)
+}
+
+func render(w http.ResponseWriter, r *http.Request, content templ.Component) {
+	if r.Header.Get("Hx-Request") == "true" {
+		content.Render(r.Context(), w)
+	} else {
+		templates.Index(content).Render(r.Context(), w)
+	}
 }
 
 func defaultDateRange() (string, string) {
