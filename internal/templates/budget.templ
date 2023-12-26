@@ -17,7 +17,6 @@ func barColor(item hledger.BudgetItem) string {
 }
 
 func barWidth(item hledger.BudgetItem) string {
-  //return "w-[88%]"
   return fmt.Sprintf("w-[%.0f%%]", item.Percent())
 }
 
@@ -29,9 +28,17 @@ templ Budget(from, to string, items []hledger.BudgetItem) {
     <input type="date" name="to" value={ to } />
   </form>
   for _, item := range items {
-    <p>{ item.Name }</p>
-    <div class="w-full my-1 bg-slate-200 border-2 border-solid border-black" >
-      <div class={ "h-8 text-center", barColor(item), barWidth(item) }>{ fmt.Sprintf("$%.2f", item.Remaining()) }</div>
+    <div
+      class="my-3"
+      hx-get={ fmt.Sprintf("/register?from=%s&to=%s&account=%s", from, to, item.Account) }
+      hx-target="#budgetRegister">
+      <p>
+        <span class="text-2xl">{ item.Name }</span>
+        ({ fmt.Sprintf("$%.2f", item.Spent) } / { fmt.Sprintf("$%.2f", item.Target) })
+      </p>
+      <div class="w-full bg-slate-200 border-2 border-solid border-black">
+        <div class={ "h-8 text-center", barColor(item), barWidth(item) }>{ fmt.Sprintf("$%.2f", item.Remaining()) }</div>
+      </div>
     </div>
   }
   <div id="budgetRegister">
