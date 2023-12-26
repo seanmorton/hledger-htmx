@@ -2,8 +2,24 @@ package templates
 
 import (
   "fmt"
+
   "github.com/seanmorton/hledger-htmx/internal/hledger"
 )
+
+func barColor(item hledger.BudgetItem) string {
+  if item.Percent() > 75 {
+    return "bg-[#149453]"
+  } else if item.Percent() > 25 {
+    return "bg-[#D4D41C]"
+  } else {
+    return "bg-[#D4481C]"
+  }
+}
+
+func barWidth(item hledger.BudgetItem) string {
+  //return "w-[88%]"
+  return fmt.Sprintf("w-[%.0f%%]", item.Percent())
+}
 
 templ Budget(from, to string, items []hledger.BudgetItem) {
   <form id="dateSelect" hx-get="/budget" hx-target="main" hx-trigger="change from:#dateSelect>input" hx-push-url="true">
@@ -12,25 +28,12 @@ templ Budget(from, to string, items []hledger.BudgetItem) {
     <label>To</label>
     <input type="date" name="to" value={ to } />
   </form>
-  <table>
-    <thead>
-      <tr>
-        <th>Account</th>
-        <th>Remaining</th>
-        <th>Target</th>
-      </tr>
-    </thead>
-    <tbody>
-      for _, item := range items {
-        <tr hx-get={ fmt.Sprintf("/register?from=%s&to=%s&account=%s", from, to, item.Account) } hx-target="#budgetRegister">
-          <td>{ item.Account }</td>
-          <td>{ fmt.Sprintf("%f", item.Remaining()) }</td>
-          <td>{ fmt.Sprintf("%f", item.Target) }</td>
-        </tr>
-      }
-    </tbody>
-  </table>
-  <hr />
+  for _, item := range items {
+    <p>{ item.Name }</p>
+    <div class="w-full my-1 bg-slate-200 border-2 border-solid border-black" >
+      <div class={ "h-8 text-center", barColor(item), barWidth(item) }>{ fmt.Sprintf("$%.2f", item.Remaining()) }</div>
+    </div>
+  }
   <div id="budgetRegister">
   </div>
 }

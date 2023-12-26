@@ -34,6 +34,7 @@ type RegisterEntry struct {
 }
 
 type BudgetItem struct {
+	Name    string  `json:"name"`
 	Account string  `json:"account"`
 	Target  float64 `json:"target"`
 	Spent   float64 `json:"spent"`
@@ -41,6 +42,10 @@ type BudgetItem struct {
 
 func (b *BudgetItem) Remaining() float64 {
 	return b.Target - b.Spent
+}
+
+func (b *BudgetItem) Percent() float64 {
+	return b.Remaining() / b.Target * 100
 }
 
 func Balances(acct string, from, to string, depth int) (Balance, error) {
