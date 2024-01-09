@@ -12,11 +12,14 @@ import (
 )
 
 //go:embed css
-var FS embed.FS
+var cssDir embed.FS
+
+//go:embed budget.json
+var budgetContents []byte
 
 // TODO error handling
 func main() {
-	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(FS))))
+	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(cssDir))))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/budget", http.StatusFound)
@@ -25,7 +28,7 @@ func main() {
 	// TODO add from/to params, (readonly cal with prev/next)
 	http.HandleFunc("/budget", func(w http.ResponseWriter, r *http.Request) {
 		from, to := defaultDateRange()
-		items, _ := hledger.Budget(from, to)
+		items, _ := hledger.Budget(from, to, budgetContents)
 		render(w, r, templates.Budget(from, to, items))
 	})
 

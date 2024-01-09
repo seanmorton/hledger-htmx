@@ -3,7 +3,6 @@ package hledger
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os/exec"
 	"slices"
 	"strconv"
@@ -71,10 +70,9 @@ func Register(acct string, to, from string) ([]RegisterEntry, error) {
 	return parseRegister(csvOutput), nil
 }
 
-func Budget(from, to string) ([]BudgetItem, error) {
-	content, _ := ioutil.ReadFile("./budget.json") // TODO configure path
+func Budget(from, to string, budgetContents []byte) ([]BudgetItem, error) {
 	items := []BudgetItem{}
-	err := json.Unmarshal(content, &items)
+	err := json.Unmarshal(budgetContents, &items)
 	if err != nil {
 		return nil, err
 	}
