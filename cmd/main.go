@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
@@ -19,6 +20,12 @@ var budgetContents []byte
 
 // TODO error handling
 func main() {
+	budgetItems := []hledger.BudgetItem{}
+	err := json.Unmarshal(budgetContents, &budgetItems)
+	if err != nil {
+		return
+	}
+
 	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(cssDir))))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +35,7 @@ func main() {
 	// TODO add from/to params, (readonly cal with prev/next)
 	http.HandleFunc("/budget", func(w http.ResponseWriter, r *http.Request) {
 		from, to := defaultDateRange()
-		items, _ := hledger.Budget(from, to, budgetContents)
+		items, _ := hledger.Budget(from, to, budgetItems)
 		render(w, r, templates.Budget(from, to, items))
 	})
 

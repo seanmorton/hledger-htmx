@@ -7,8 +7,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-
-	"encoding/json"
 )
 
 // TODO properly escape csv, add comma back to commodity (or upgrade hledger)
@@ -70,13 +68,7 @@ func Register(acct string, to, from string) ([]RegisterEntry, error) {
 	return parseRegister(csvOutput), nil
 }
 
-func Budget(from, to string, budgetContents []byte) ([]BudgetItem, error) {
-	items := []BudgetItem{}
-	err := json.Unmarshal(budgetContents, &items)
-	if err != nil {
-		return nil, err
-	}
-
+func Budget(from, to string, items []BudgetItem) ([]BudgetItem, error) {
 	for i, item := range items {
 		balance, _ := Balances(item.Account, from, to, 0)
 		item.Spent = balance.Total
