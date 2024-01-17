@@ -85,10 +85,10 @@ func defaultDateRange() (string, string) {
 	var from, to string
 	now := time.Now()
 	if now.Day() < 16 {
-		from = time.Date(now.Year(), now.Month()-1, 15, 0, 0, 0, 0, time.Local).Format(time.DateOnly)
+		from = time.Date(now.Year(), now.Month()-1, 16, 0, 0, 0, 0, time.Local).Format(time.DateOnly)
 		to = time.Date(now.Year(), now.Month(), 16, 0, 0, 0, 0, time.Local).Format(time.DateOnly)
 	} else {
-		from = time.Date(now.Year(), now.Month(), 15, 0, 0, 0, 0, time.Local).Format(time.DateOnly)
+		from = time.Date(now.Year(), now.Month(), 16, 0, 0, 0, 0, time.Local).Format(time.DateOnly)
 		to = time.Date(now.Year(), now.Month()+1, 16, 0, 0, 0, 0, time.Local).Format(time.DateOnly)
 	}
 	return from, to
