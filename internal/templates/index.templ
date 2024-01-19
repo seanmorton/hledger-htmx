@@ -4,7 +4,8 @@ templ Index(content templ.Component) {
   <!DOCTYPE html>
   <html>
     <head>
-      <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=yes"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+      <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"/>
       <link rel="stylesheet" href="/public/css/styles.css"/>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
       <script src="https://unpkg.com/htmx.org@1.9.2"
@@ -12,16 +13,35 @@ templ Index(content templ.Component) {
               crossorigin="anonymous">
       </script>
     </head>
-    <body style="width:90%; margin:0 auto;" class="bg-gray-200">
-      <nav>
-        <ul>
-          <li><a hx-get="/budget" hx-target="main" hx-push-url="true">Budget</a></li>
-          <li><a hx-get="/expenses" hx-target="main" hx-push-url="true">Expenses</a></li>
-        </ul>
-      </nav>
-      <main class="bg-gray-200">
+    <body>
+      <header>
+        <nav>
+          <a id="navBudget" class="current" hx-get="/budget" hx-target="main" hx-push-url="true">Budget</a>
+          <a id="navExpenses" hx-get="/expenses" hx-target="main" hx-push-url="true">Expenses</a>
+        </nav>
+      </header>
+      <main>
         @content
       </main>
     </body>
+    @setCurrentPage()
   </html>
 }
+
+script setCurrentPage() {
+  document.body.addEventListener("htmx:afterSwap", function(e) {
+    var responseURL = new URL(e.detail.xhr.responseURL);
+
+    switch(responseURL.pathname) {
+    case "/budget":
+      htmx.find(".current").classList.remove("current")
+      htmx.find("#navBudget").classList.add("current")
+      break;
+    case "/expenses":
+      htmx.find(".current").classList.remove("current")
+      htmx.find("#navExpenses").classList.add("current")
+      break;
+    }
+  });
+}
+

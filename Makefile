@@ -1,6 +1,6 @@
 .PHONY: build
 build:
-	docker build --tag smorton517/hledger-htmx --platform linux/amd64 .
+	docker build --tag smorton517/hledger-htmx:latest --platform linux/amd64 .
 
 .PHONY: push
 push:

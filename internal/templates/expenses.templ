@@ -11,8 +11,8 @@ templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledg
     <input id="currentAccount" name="account" type="hidden" value={ balance.Account } />
   </form>
 
-  <div style="width: 600px; height: 600px;">
-    <canvas id="balanceChart" width="600px" height="600px"></canvas>
+  <div style="width: 350; height: 350;">
+    <canvas id="balanceChart" width="350px" height="350px"></canvas>
   </div>
   @Register(from, to, registerEntries)
 
