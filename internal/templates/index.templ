@@ -4,9 +4,18 @@ templ Index(content templ.Component) {
   <!DOCTYPE html>
   <html>
     <head>
+      <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+      <meta name="description" content="BOOKS"/>
+      <meta name="apple-mobile-web-app-capable" content="yes"/>
+      <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+      <meta name="apple-mobile-web-app-title" content="BOOKS"/>
+
+      <link rel="icon" type="image/png" href="/public/icons/16.png"/>
+      <link rel="manifest" href="/public/manifest.json" />
       <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"/>
-      <link rel="stylesheet" href="/public/css/styles.css"/>
+      <link rel="stylesheet" href="/public/styles.css"/>
+
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
       <script src="https://unpkg.com/htmx.org@1.9.2"
               integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
@@ -25,6 +34,7 @@ templ Index(content templ.Component) {
       </main>
     </body>
     @setCurrentPage()
+    @registerServiceWorker()
   </html>
 }
 
@@ -43,5 +53,11 @@ script setCurrentPage() {
       break;
     }
   });
+}
+
+script registerServiceWorker() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/public/sw.js");
+  }
 }
 

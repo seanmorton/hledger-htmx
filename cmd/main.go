@@ -12,8 +12,8 @@ import (
 	"github.com/seanmorton/hledger-htmx/internal/templates"
 )
 
-//go:embed css
-var cssDir embed.FS
+//go:embed public
+var publicDir embed.FS
 
 //go:embed budget.json
 var budgetContents []byte
@@ -26,7 +26,7 @@ func main() {
 		return
 	}
 
-	http.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.FS(cssDir))))
+	http.Handle("/public/", http.FileServer(http.FS(publicDir)))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/budget", http.StatusFound)
