@@ -7,9 +7,9 @@ import (
 )
 
 func barColor(item hledger.BudgetItem) string {
-  if item.Percent() > 75 {
+  if item.Percent() > 50 {
     return "bg-green"
-  } else if item.Percent() > 25 {
+  } else if item.Percent() > 20 {
     return "bg-yellow"
   } else {
     return "bg-red"

@@ -8,7 +8,7 @@ templ Register(from, to string, registerEntries []hledger.RegisterEntry) {
       <tbody>
         for _, entry := range registerEntries {
           <tr>
-            <td>{ entry.Date }</td>
+            <td>{ entry.Date[5:] }</td>
             <td>{ entry.Description }</td>
             <td>{ entry.Amount }</td>
             <td>{ entry.Total }</td>
