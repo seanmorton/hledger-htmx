@@ -24,10 +24,11 @@ templ Index(content templ.Component) {
       <script src="https://unpkg.com/pulltorefreshjs"></script>
     </head>
     <body>
+      <span id="loading" class="loader"></span>
       <header>
         <nav>
-          <a id="navBudget" class="current" hx-get="/budget" hx-target="main" hx-push-url="true">Budget</a>
-          <a id="navExpenses" hx-get="/expenses" hx-target="main" hx-push-url="true">Expenses</a>
+          <a id="navBudget" class="current" hx-get="/budget" hx-target="main" hx-push-url="true" hx-indicator="#loading">Budget</a>
+          <a id="navExpenses" hx-get="/expenses" hx-target="main" hx-push-url="true" hx-indicator="#loading">Expenses</a>
         </nav>
       </header>
       <main>

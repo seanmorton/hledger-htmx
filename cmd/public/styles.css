@@ -24,12 +24,44 @@ h1,h2,h3,h4,h5 {
     background-color: rgb(212 72 28/var(--tw-bg-opacity));
 }
 
+.loader{
+  display:none;
+}
+.htmx-request .loader{
+  display:inline;
+}
+.htmx-request.loader{
+  display:inline;
+}
+/* https://cssloaders.github.io/ */
+.loader::after {
+  content: '';
+  width: 275px;
+  height: 4.8px;
+  background: green;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  animation: loaderanim 0.75s linear infinite;
+}
+@keyframes loaderanim {
+  0% {
+    left: 0;
+    transform: translateX(-100%);
+  }
+  100% {
+    left: 100%;
+    transform: translateX(0%);
+  }
+}
+
 .border {
     border-width: 2px;
     border-style: solid;
 }
 
-.bar {
+.budgetBar {
     height: 2rem;
     text-align: center;
     font-weight: bold;
