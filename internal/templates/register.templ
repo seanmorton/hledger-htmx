@@ -4,7 +4,7 @@ import "github.com/seanmorton/hledger-htmx/internal/hledger"
 
 templ Register(from, to string, registerEntries []hledger.RegisterEntry) {
   <figure>
-    <table>
+    <table id="register">
       <tbody>
         for _, entry := range registerEntries {
           <tr>
