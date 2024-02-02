@@ -16,11 +16,11 @@ templ Index(content templ.Component) {
       <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"/>
       <link rel="stylesheet" href="/public/styles.css"/>
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-      <script src="https://unpkg.com/htmx.org@1.9.2"
-              integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
+      <script src="https://unpkg.com/htmx.org@1.9.10"
+              integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
               crossorigin="anonymous">
       </script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
       <script src="https://unpkg.com/pulltorefreshjs"></script>
     </head>
     <body>
@@ -34,48 +34,28 @@ templ Index(content templ.Component) {
       <main>
         @content
       </main>
+      <script>
+        document.body.addEventListener("htmx:afterSwap", function(e) {
+          var responseURL = new URL(e.detail.xhr.responseURL);
+
+          switch(responseURL.pathname) {
+          case "/budget":
+            htmx.find(".current").classList.remove("current")
+            htmx.find("#navBudget").classList.add("current")
+            break;
+          case "/expenses":
+            htmx.find(".current").classList.remove("current")
+            htmx.find("#navExpenses").classList.add("current")
+            break;
+          }
+        });
+
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("/public/sw.js");
+        }
+
+        PullToRefresh.init();
+      </script>
     </body>
-    @setCurrentPage()
-    @registerServiceWorker()
-    @restorePullToRefresh()
   </html>
-}
-
-script setCurrentPage() {
-  document.body.addEventListener("htmx:afterSwap", function(e) {
-    var responseURL = new URL(e.detail.xhr.responseURL);
-
-    switch(responseURL.pathname) {
-    case "/budget":
-      htmx.find(".current").classList.remove("current")
-      htmx.find("#navBudget").classList.add("current")
-      break;
-    case "/expenses":
-      htmx.find(".current").classList.remove("current")
-      htmx.find("#navExpenses").classList.add("current")
-      break;
-    }
-  });
-}
-
-script registerServiceWorker() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/public/sw.js");
-  }
-}
-
-
-// https://stackoverflow.com/questions/75972895/ios-pwa-how-to-re-enable-pull-to-refresh
-script restorePullToRefresh() {
-  const standalone = navigator.standalone ||
-    window.matchMedia("(display-mode: standalone)").matches;
-  if (!standalone) {
-    return;
-  }
-
-  PullToRefresh.init({
-    onRefresh() {
-      location.reload();
-    },
-  });
 }

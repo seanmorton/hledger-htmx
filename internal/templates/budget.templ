@@ -29,7 +29,9 @@ templ Budget(from, to string, items []hledger.BudgetItem) {
   </form>
   for _, item := range items {
     <div
+      class="budgetRow"
       hx-get={ fmt.Sprintf("/register?from=%s&to=%s&account=%s", from, to, item.Account) }
+      hx-on::after-request="this.appendChild(htmx.find('#budgetRegister'));"
       hx-target="#budgetRegister"
       hx-indicator="#loading"
       >
@@ -43,4 +45,3 @@ templ Budget(from, to string, items []hledger.BudgetItem) {
   <div id="budgetRegister">
   </div>
 }
-
