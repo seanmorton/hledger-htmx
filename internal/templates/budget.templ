@@ -9,7 +9,7 @@ import (
 func barColor(item hledger.BudgetItem) string {
   if item.Percent() > 50 {
     return "bg-green"
-  } else if item.Percent() > 20 {
+  } else if item.Percent() > 0 {
     return "bg-yellow"
   } else {
     return "bg-red"
@@ -21,12 +21,7 @@ func barWidth(item hledger.BudgetItem) string {
 }
 
 templ Budget(from, to string, items []hledger.BudgetItem) {
-  <form id="dateSelect" hx-get="/budget" hx-target="main" hx-trigger="change from:#dateSelect>input" hx-push-url="true" hx-indicator="#loading">
-    <label>From</label>
-    <input type="date" name="from" value={ from } />
-    <label>To</label>
-    <input type="date" name="to" value={ to } />
-  </form>
+  @Params("/budget", "main", from, to, "")
   for _, item := range items {
     <div
       class="budgetRow"

@@ -1,0 +1,28 @@
+package templates
+
+templ Params(path, target, from, to, account string) {
+  <form id="dateSelect" hx-get={ path } hx-target={ target } hx-trigger="change from:#dateSelect>input" hx-push-url="true" hx-indicator="#loading">
+    <label>From</label>
+    <input type="date" name="from" value={ from } />
+    <label>To</label>
+    <input type="date" name="to" value={ to } />
+    <input id="currentAccount" name="account" type="hidden" value={ account } />
+    <br />
+    <button type="button" hx-on:click="seekMonth(-1);">Prev</button>
+    <button type="button" hx-on:click="seekMonth(1);">Next</button>
+  </form>
+  <script>
+    function seekMonth(n) {
+      const form = htmx.find("#dateSelect");
+      const from = htmx.find("#dateSelect>input[name=from]");
+      const to = htmx.find("#dateSelect>input[name=to]");
+      const tzOffsetHrs = new Date().getTimezoneOffset() / 60;
+      const fromDate = new Date(from.value + "T00:00:00.000-0" + tzOffsetHrs + ":00");
+      const toDate = new Date(to.value + "T00:00:00.000-0" + tzOffsetHrs + ":00");
+
+      from.valueAsDate = new Date(fromDate.setMonth(fromDate.getMonth()+n));
+      to.valueAsDate = new Date(toDate.setMonth(toDate.getMonth()+n));
+      to.dispatchEvent(new Event("change"));
+    }
+  </script>
+}

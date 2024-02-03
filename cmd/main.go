@@ -32,9 +32,12 @@ func main() {
 		http.Redirect(w, r, "/budget", http.StatusFound)
 	})
 
-	// TODO add from/to params, (readonly cal with prev/next)
 	http.HandleFunc("/budget", func(w http.ResponseWriter, r *http.Request) {
-		from, to := defaultDateRange()
+		from := r.URL.Query().Get("from")
+		to := r.URL.Query().Get("to")
+		if from == "" || to == "" {
+			from, to = defaultDateRange()
+		}
 		items, _ := hledger.Budget(from, to, budgetItems)
 		render(w, r, templates.Budget(from, to, items))
 	})

@@ -3,14 +3,7 @@ package templates
 import "github.com/seanmorton/hledger-htmx/internal/hledger"
 
 templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledger.RegisterEntry) {
-  <form id="dateSelect" hx-get="/expenses" hx-target="main" hx-trigger="change from:#dateSelect>input" hx-push-url="true" hx-indicator="#loading">
-    <label>From</label>
-    <input type="date" name="from" value={ from } />
-    <label>To</label>
-    <input type="date" name="to" value={ to } />
-    <input id="currentAccount" name="account" type="hidden" value={ balance.Account } />
-  </form>
-
+  @Params("/expenses", "main", from, to, balance.Account)
   <div style="width: 350; height: 350;">
     <canvas id="balanceChart" width="350px" height="350px"></canvas>
   </div>
