@@ -1,5 +1,7 @@
 package templates
 
+import "fmt"
+
 templ Index(content templ.Component) {
   <!DOCTYPE html>
   <html>
@@ -58,4 +60,9 @@ templ Index(content templ.Component) {
       </script>
     </body>
   </html>
+}
+
+
+func money(amount float64) string {
+  return fmt.Sprintf("$%.2f", amount)
 }

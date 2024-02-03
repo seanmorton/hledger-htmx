@@ -1,9 +1,13 @@
 package templates
 
-import "github.com/seanmorton/hledger-htmx/internal/hledger"
+import (
+  "github.com/seanmorton/hledger-htmx/internal/hledger"
+)
 
 templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledger.RegisterEntry) {
   @Params("/expenses", "main", from, to, balance.Account)
+  <h4 style="text-align:center;">{ balance.Account }</h4>
+  <h5 style="text-align:center;">{ money(balance.Amount) }</h5>
   <div style="width: 350; height: 350;">
     <canvas id="balanceChart" width="350px" height="350px"></canvas>
   </div>
@@ -13,8 +17,8 @@ templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledg
 
 script graph(balance hledger.Balance) {
   const canvas = htmx.find("#balanceChart");
-  const labels = balance.entries.map((e) => e.account);
-  const values = balance.entries.map((e) => e.amount);
+  const labels = balance.sub_balances.map((b) => b.account.split(":").at(-1));
+  const values = balance.sub_balances.map((b) => b.amount);
   //  Color Palette by Paletton.com
   //  http://paletton.com/#uid=74H180kt+lZlOstrKqzzSiaJidt
   const colors = [
@@ -43,33 +47,35 @@ script graph(balance hledger.Balance) {
       }]
     },
     options: {
-      title: {
-        display: true,
-        text: "Balances for " + balance.account
-      },
       legend: {
-        display: true
+        display: true,
+        position: "bottom",
+        labels: {
+          fontSize: 16,
+          fontColor: "#dcdcdc",
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'Avenir Next', Avenir, 'Nimbus Sans L', Roboto, 'Noto Sans', 'Segoe UI', Arial, Helvetica, 'Helvetica Neue', sans-serif",
+        }
       },
     }
   });
   canvas.onclick = function(evt) {
-    var account
-    var activePoints = chart.getElementsAtEvent(evt);
+    const currentAccount = htmx.find("#currentAccount").value;
+    let activePoints = chart.getElementsAtEvent(evt);
+    let account;
     if (activePoints[0]) {
       var chartData = activePoints[0]['_chart'].config.data;
       var idx = activePoints[0]['_index'];
-      account = chartData.labels[idx];
+      account = currentAccount + ":" + chartData.labels[idx];
     } else {
-      account = htmx.find("#currentAccount").value;
-      accountParts = account.split(":")
+      accountParts = currentAccount.split(":");
       if (accountParts.length == 1 || accountParts[1] == "") {
         return;
       }
-      account = account.split(":").slice(0,-1).join(":");
+      account = currentAccount.split(":").slice(0,-1).join(":");
     }
-    currentAccount = htmx.find("#currentAccount");
-    currentAccount.value = account;
-    currentAccount.dispatchEvent(new Event("change"));
+    currentAccountElem = htmx.find("#currentAccount");
+    currentAccountElem.value = account;
+    currentAccountElem.dispatchEvent(new Event("change"));
   };
 }
 

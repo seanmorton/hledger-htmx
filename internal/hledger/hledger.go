@@ -9,17 +9,10 @@ import (
 	"strings"
 )
 
-// TODO properly escape csv, add comma back to commodity (or upgrade hledger)
-
 type Balance struct {
-	Account string         `json:"account"`
-	Total   float64        `json:"total"`
-	Entries []BalanceEntry `json:"entries"`
-}
-
-type BalanceEntry struct {
-	Account string  `json:"account"`
-	Amount  float64 `json:"amount"`
+	Account     string    `json:"account"`
+	Amount      float64   `json:"amount"`
+	SubBalances []Balance `json:"sub_balances"`
 }
 
 type RegisterEntry struct {
@@ -71,7 +64,7 @@ func Register(acct string, to, from string) ([]RegisterEntry, error) {
 func Budget(from, to string, items []BudgetItem) ([]BudgetItem, error) {
 	for i, item := range items {
 		balance, _ := Balances(item.Account, from, to, 0)
-		item.Spent = balance.Total
+		item.Spent = balance.Amount
 		items[i] = item
 	}
 	return items, nil
@@ -89,7 +82,7 @@ func hledger(args string) (string, error) {
 
 func parseBalances(acct, csv string) Balance {
 	var total float64
-	entries := []BalanceEntry{}
+	subBalances := []Balance{}
 	rows := strings.Split(csv, "\n")
 
 	for _, row := range rows {
@@ -100,18 +93,21 @@ func parseBalances(acct, csv string) Balance {
 				total = amount
 				continue
 			}
-			entry := BalanceEntry{
+			balance := Balance{
 				Account: strings.ReplaceAll(data[0], "\"", ""),
 				Amount:  amount,
 			}
-			entries = append(entries, entry)
+			subBalances = append(subBalances, balance)
 		}
 	}
 
+	if strings.HasSuffix(acct, ":") {
+		acct = acct[:len(acct)-1]
+	}
 	return Balance{
-		Account: acct,
-		Total:   total,
-		Entries: entries,
+		Account:     acct,
+		Amount:      total,
+		SubBalances: subBalances,
 	}
 }
 

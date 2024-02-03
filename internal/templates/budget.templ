@@ -32,9 +32,9 @@ templ Budget(from, to string, items []hledger.BudgetItem) {
       >
       <h4>{ item.Name }</h4>
       <div class="w-full border">
-        <div class={ "budgetBar", barColor(item), barWidth(item) }>{ fmt.Sprintf("$%.2f", item.Remaining()) }</div>
+        <div class={ "budgetBar", barColor(item), barWidth(item) }>{ money(item.Remaining()) }</div>
       </div>
-      <span>({ fmt.Sprintf("$%.2f", item.Spent) } / { fmt.Sprintf("$%.2f", item.Target) })</span>
+      <span>({ money(item.Spent) } / { money(item.Target) })</span>
     </div>
   }
   <div id="budgetRegister">
