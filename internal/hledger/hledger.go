@@ -17,10 +17,10 @@ type Balance struct {
 
 type RegisterEntry struct {
 	Account     string
-	Amount      string
+	Amount      float64
 	Date        string
 	Description string
-	Total       string
+	Total       float64
 }
 
 type BudgetItem struct {
@@ -99,7 +99,7 @@ func parseBalances(acct, csv string) Balance {
 	for _, row := range rows {
 		data := strings.Split(row, ",")
 		if len(data) == 2 && data[0] != "\"account\"" { // Skip header
-			amount, _ := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(data[1], "\"", ""), "$", ""), 64)
+			amount, _ := parseAmount(data[1])
 			if data[0] == "\"total\"" {
 				total = amount
 				continue
@@ -129,16 +129,22 @@ func parseRegister(csv string) []RegisterEntry {
 	for _, row := range rows {
 		data := strings.Split(row, ",")
 		if len(data) == 7 && data[0] != "\"txnidx\"" {
+			amount, _ := parseAmount(data[5])
+			total, _ := parseAmount(data[6])
 			entry := RegisterEntry{
-				Amount:      strings.ReplaceAll(data[5], "\"", ""),
+				Amount:      amount,
 				Account:     strings.ReplaceAll(data[4], "\"", ""),
 				Date:        strings.ReplaceAll(data[1], "\"", ""),
 				Description: strings.ReplaceAll(data[3], "\"", ""),
-				Total:       strings.ReplaceAll(data[6], "\"", ""),
+				Total:       total,
 			}
 			entries = append(entries, entry)
 		}
 	}
-	slices.Reverse(entries)
+	slices.Reverse(entries) // Show most recent first
 	return entries
+}
+
+func parseAmount(amount string) (float64, error) {
+	return strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(amount, "\"", ""), "$", ""), 64)
 }

@@ -1,9 +1,15 @@
 package templates
 
 import (
-  "golang.org/x/text/language"
-  "golang.org/x/text/message"
+  "github.com/leekchan/accounting"
 )
+
+var ac = accounting.Accounting{Symbol: "$", Precision: 2}
+
+
+func money(amount float64) string {
+  return ac.FormatMoney(amount)
+}
 
 templ Index(content templ.Component) {
   <!DOCTYPE html>
@@ -34,8 +40,8 @@ templ Index(content templ.Component) {
         <nav>
           <a id="nav-acct-r" hx-get="/accounts?account=re&invert=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Revenue</a>
           <a id="nav-acct-x" hx-get="/accounts?account=xp" hx-target="main" hx-push-url="true" hx-indicator="#loading">Expenses</a>
-          <a id="nav-acct-a" hx-get="/accounts?account=as&historical=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Assets</a>
-          <a id="nav-acct-l" hx-get="/accounts?account=li&historical=true&invert=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Liabilities</a>
+          <a id="nav-acct-a" hx-get="/accounts?account=as:cash&historical=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Assets</a>
+          <a id="nav-acct-l" hx-get="/accounts?account=li:cc&historical=true&invert=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Liabilities</a>
           <a id="nav-budget" class="current" hx-get="/budget" hx-target="main" hx-push-url="true" hx-indicator="#loading">Budget</a>
         </nav>
       </header>
@@ -63,10 +69,10 @@ templ Index(content templ.Component) {
               case "xp":
                 swapCurrent("#nav-acct-x");
                 break;
-              case "as":
+              case "as:cash":
                 swapCurrent("#nav-acct-a");
                 break;
-              case "li":
+              case "li:cc":
                 swapCurrent("#nav-acct-l");
                 break;
             }
@@ -89,10 +95,4 @@ templ Index(content templ.Component) {
       </script>
     </body>
   </html>
-}
-
-
-func money(amount float64) string {
-  p := message.NewPrinter(language.English)
-  return p.Sprintf("$%v", amount)
 }

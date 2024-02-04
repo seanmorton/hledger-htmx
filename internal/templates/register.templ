@@ -2,16 +2,16 @@ package templates
 
 import "github.com/seanmorton/hledger-htmx/internal/hledger"
 
-templ Register(from, to string, registerEntries []hledger.RegisterEntry) {
+templ Register(from, to string, entries []hledger.RegisterEntry) {
   <figure>
     <table id="register">
       <tbody>
-        for _, entry := range registerEntries {
+        for _, entry := range entries {
           <tr>
             <td>{ entry.Date[5:] }</td>
             <td>{ entry.Description }</td>
-            <td>{ entry.Amount }</td>
-            <td>{ entry.Total }</td>
+            <td>{ money(entry.Amount) }</td>
+            <td>{ money(entry.Total) }</td>
           </tr>
         }
       </tbody>
