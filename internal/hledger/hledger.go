@@ -38,12 +38,16 @@ func (b *BudgetItem) Percent() float64 {
 	return b.Remaining() / b.Target * 100
 }
 
-func Balances(acct string, from, to string, depth int) (Balance, error) {
-	var args string
+func Balances(acct, from, to string, depth int, historical, invert bool) (Balance, error) {
+	args := fmt.Sprintf("bal %s -b %s -e %s -S -V -O csv", acct, from, to)
 	if depth > 0 {
-		args = fmt.Sprintf("bal %s -%d -b %s -e %s -S -O csv", acct, depth, from, to)
-	} else {
-		args = fmt.Sprintf("bal %s -b %s -e %s -S -O csv", acct, from, to)
+		args = fmt.Sprintf("%s -%d", args, depth)
+	}
+	if historical {
+		args = fmt.Sprintf("%s --historical", args)
+	}
+	if invert {
+		args = fmt.Sprintf("%s --invert", args)
 	}
 	csvOutput, err := hledger(args)
 	if err != nil {
@@ -52,8 +56,14 @@ func Balances(acct string, from, to string, depth int) (Balance, error) {
 	return parseBalances(acct, csvOutput), nil
 }
 
-func Register(acct string, to, from string) ([]RegisterEntry, error) {
+func Register(acct, to, from string, historical, invert bool) ([]RegisterEntry, error) {
 	args := fmt.Sprintf("register %s -b %s -e %s -O csv", acct, to, from)
+	if historical {
+		args = fmt.Sprintf("%s --historical", args)
+	}
+	if invert {
+		args = fmt.Sprintf("%s --invert", args)
+	}
 	csvOutput, err := hledger(args)
 	if err != nil {
 		return nil, err
@@ -63,13 +73,14 @@ func Register(acct string, to, from string) ([]RegisterEntry, error) {
 
 func Budget(from, to string, items []BudgetItem) ([]BudgetItem, error) {
 	for i, item := range items {
-		balance, _ := Balances(item.Account, from, to, 0)
+		balance, _ := Balances(item.Account, from, to, 0, false, false)
 		item.Spent = balance.Amount
 		items[i] = item
 	}
 	return items, nil
 }
 
+// TODO(security) prevent malicious command injection
 func hledger(args string) (string, error) {
 	cmd := exec.Command("hledger", strings.Split(args, " ")...)
 	out, err := cmd.Output()

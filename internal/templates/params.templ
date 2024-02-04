@@ -1,12 +1,16 @@
 package templates
 
-templ Params(path, target, from, to, account string) {
+import "fmt"
+
+templ Params(path, target, account, from, to string, historical, invert bool) {
   <form id="dateSelect" hx-get={ path } hx-target={ target } hx-trigger="change from:#dateSelect>input" hx-push-url="true" hx-indicator="#loading">
     <label>From</label>
     <input type="date" name="from" value={ from } />
     <label>To</label>
     <input type="date" name="to" value={ to } />
     <input id="currentAccount" name="account" type="hidden" value={ account } />
+    <input name="historical" type="hidden" value={ fmt.Sprintf("%v", historical) } />
+    <input name="invert" type="hidden" value={ fmt.Sprintf("%v", invert) } />
     <br />
     <button type="button" hx-on:click="seekMonth(-1);">Prev</button>
     <button type="button" hx-on:click="seekMonth(1);">Next</button>

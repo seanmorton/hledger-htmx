@@ -21,7 +21,7 @@ func barWidth(item hledger.BudgetItem) string {
 }
 
 templ Budget(from, to string, items []hledger.BudgetItem) {
-  @Params("/budget", "main", from, to, "")
+  @Params("/budget", "main", "", from, to, false, false)
   for _, item := range items {
     <div
       class="budgetRow"

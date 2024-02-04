@@ -4,8 +4,8 @@ import (
   "github.com/seanmorton/hledger-htmx/internal/hledger"
 )
 
-templ Expenses(from, to string, balance hledger.Balance, registerEntries []hledger.RegisterEntry) {
-  @Params("/expenses", "main", from, to, balance.Account)
+templ Accounts(from, to string, historical, invert bool, balance hledger.Balance, registerEntries []hledger.RegisterEntry) {
+  @Params("/accounts", "main", balance.Account, from, to, historical, invert)
   <h4 style="text-align:center;">{ balance.Account }</h4>
   <h5 style="text-align:center;">{ money(balance.Amount) }</h5>
   <div style="width: 350; height: 350;">

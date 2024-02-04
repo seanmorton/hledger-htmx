@@ -42,24 +42,32 @@ func main() {
 		render(w, r, templates.Budget(from, to, items))
 	})
 
-	http.HandleFunc("/expenses", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/accounts", func(w http.ResponseWriter, r *http.Request) {
 		acct := r.URL.Query().Get("account")
 		var depth int
-		if acct == "" || acct == "xp" || acct == "xp:" {
-			acct = "xp:"
+		if acct == "" {
+			return // TODO err handling
+		}
+		if !strings.Contains(acct, ":") {
+			acct = acct + ":"
 			depth = 2
 		} else {
 			depth = len(strings.Split(acct, ":")) + 1
 		}
+
 		from := r.URL.Query().Get("from")
 		to := r.URL.Query().Get("to")
 		if from == "" || to == "" {
 			from, to = defaultDateRange()
 		}
-		balances, _ := hledger.Balances(acct, from, to, depth)
-		register, _ := hledger.Register(acct, from, to)
 
-		render(w, r, templates.Expenses(from, to, balances, register))
+		historical := r.URL.Query().Get("historical") == "true"
+		invert := r.URL.Query().Get("invert") == "true"
+
+		balances, _ := hledger.Balances(acct, from, to, depth, historical, invert)
+		register, _ := hledger.Register(acct, from, to, historical, invert)
+
+		render(w, r, templates.Accounts(from, to, historical, invert, balances, register))
 	})
 
 	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
@@ -69,8 +77,11 @@ func main() {
 		if from == "" || to == "" {
 			from, to = defaultDateRange()
 		}
-		register, _ := hledger.Register(acct, from, to)
 
+		historical := r.URL.Query().Get("historical") == "true"
+		invert := r.URL.Query().Get("invert") == "true"
+
+		register, _ := hledger.Register(acct, from, to, historical, invert)
 		render(w, r, templates.Register(from, to, register))
 	})
 	http.ListenAndServe(":8080", nil)
@@ -84,6 +95,7 @@ func render(w http.ResponseWriter, r *http.Request, content templ.Component) {
 	}
 }
 
+// TODO make day of month configurable
 func defaultDateRange() (string, string) {
 	var from, to string
 	now := time.Now()
