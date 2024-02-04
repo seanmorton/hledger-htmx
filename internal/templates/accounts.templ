@@ -12,10 +12,14 @@ templ Accounts(from, to string, historical, invert bool, balance hledger.Balance
     <canvas id="balanceChart" width="350px" height="350px"></canvas>
   </div>
   @Register(from, to, registerEntries)
-  @graph(balance)
+  if historical {
+    @graph("bar", balance)
+  } else {
+    @graph("doughnut", balance)
+  }
 }
 
-script graph(balance hledger.Balance) {
+script graph(chartType string, balance hledger.Balance) {
   const canvas = htmx.find("#balanceChart");
   const labels = balance.sub_balances.map((b) => b.account.split(":").at(-1));
   const values = balance.sub_balances.map((b) => b.amount);
@@ -38,17 +42,18 @@ script graph(balance hledger.Balance) {
    "#087B40",
   ];
   const chart = new Chart(canvas, {
-    type: "doughnut",
+    type: chartType,
     data: {
       labels: labels,
       datasets: [{
+        label: "",
         backgroundColor: colors,
         data: values
       }]
     },
     options: {
       legend: {
-        display: true,
+        display: (chartType == "doughnut" ? true : false),
         position: "bottom",
         labels: {
           fontSize: 16,
@@ -78,4 +83,3 @@ script graph(balance hledger.Balance) {
     currentAccountElem.dispatchEvent(new Event("change"));
   };
 }
-

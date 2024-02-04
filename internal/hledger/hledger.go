@@ -57,7 +57,7 @@ func Balances(acct, from, to string, depth int, historical, invert bool) (Balanc
 }
 
 func Register(acct, to, from string, historical, invert bool) ([]RegisterEntry, error) {
-	args := fmt.Sprintf("register %s -b %s -e %s -O csv", acct, to, from)
+	args := fmt.Sprintf("register %s -b %s -e %s -V -O csv", acct, to, from)
 	if historical {
 		args = fmt.Sprintf("%s --historical", args)
 	}

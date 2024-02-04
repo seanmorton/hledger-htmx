@@ -1,6 +1,9 @@
 package templates
 
-import "fmt"
+import (
+  "golang.org/x/text/language"
+  "golang.org/x/text/message"
+)
 
 templ Index(content templ.Component) {
   <!DOCTYPE html>
@@ -29,49 +32,53 @@ templ Index(content templ.Component) {
       <span id="loading" class="loader"></span>
       <header>
         <nav>
-          <a id="nav-budget" class="current" hx-get="/budget" hx-target="main" hx-push-url="true" hx-indicator="#loading">Budget</a>
           <a id="nav-acct-r" hx-get="/accounts?account=re&invert=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Revenue</a>
           <a id="nav-acct-x" hx-get="/accounts?account=xp" hx-target="main" hx-push-url="true" hx-indicator="#loading">Expenses</a>
           <a id="nav-acct-a" hx-get="/accounts?account=as&historical=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Assets</a>
           <a id="nav-acct-l" hx-get="/accounts?account=li&historical=true&invert=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Liabilities</a>
+          <a id="nav-budget" class="current" hx-get="/budget" hx-target="main" hx-push-url="true" hx-indicator="#loading">Budget</a>
         </nav>
       </header>
       <main>
         @content
       </main>
       <script>
-        function setCurrentTab(tabId) {
-          prevTab = htmx.find(".current")
-          if (prevTab != null) {
-            prevTab.classList.remove("current")
+        function setCurrentTab(url) {
+          function swapCurrent(tabId) {
+            prevTab = htmx.find(".current");
+            if (prevTab != null) {
+              prevTab.classList.remove("current");
+            }
+            htmx.find(tabId).classList.add("current");
           }
-          htmx.find(tabId).classList.add("current")
-        }
-
-        document.body.addEventListener("htmx:afterSwap", function(e) {
-          var responseURL = new URL(e.detail.xhr.responseURL);
-
-          switch(responseURL.pathname) {
+          switch(url.pathname) {
           case "/budget":
-            setCurrentTab("#nav-budget");
+            swapCurrent("#nav-budget");
             break;
           case "/accounts":
-            switch(responseURL.searchParams.get("account")) {
+            switch(url.searchParams.get("account")) {
               case "re":
-                setCurrentTab("#nav-acct-r");
+                swapCurrent("#nav-acct-r");
                 break;
               case "xp":
-                setCurrentTab("#nav-acct-x");
+                swapCurrent("#nav-acct-x");
                 break;
               case "as":
-                setCurrentTab("#nav-acct-a");
+                swapCurrent("#nav-acct-a");
                 break;
-              case "re":
-                setCurrentTab("#nav-acct-l");
+              case "li":
+                swapCurrent("#nav-acct-l");
                 break;
             }
             break;
           }
+        }
+
+        window.onload = function(e) {
+          setCurrentTab(new URL(document.location.href));
+        };
+        htmx.on("htmx:afterSwap", function(e) {
+          setCurrentTab(new URL(e.detail.xhr.responseURL));
         });
 
         if ("serviceWorker" in navigator) {
@@ -86,5 +93,6 @@ templ Index(content templ.Component) {
 
 
 func money(amount float64) string {
-  return fmt.Sprintf("$%.2f", amount)
+  p := message.NewPrinter(language.English)
+  return p.Sprintf("$%v", amount)
 }
