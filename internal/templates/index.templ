@@ -40,7 +40,7 @@ templ Index(content templ.Component) {
         <nav>
           <a id="nav-acct-r" hx-get="/accounts?account=re&invert=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Revenue</a>
           <a id="nav-acct-x" hx-get="/accounts?account=xp" hx-target="main" hx-push-url="true" hx-indicator="#loading">Expenses</a>
-          <a id="nav-acct-a" hx-get="/accounts?account=as:cash&historical=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Assets</a>
+          <a id="nav-acct-a" hx-get="/accounts?account=as:cash:ftf:checking&historical=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Assets</a>
           <a id="nav-acct-l" hx-get="/accounts?account=li:cc&historical=true&invert=true" hx-target="main" hx-push-url="true" hx-indicator="#loading">Liabilities</a>
           <a id="nav-budget" class="current" hx-get="/budget" hx-target="main" hx-push-url="true" hx-indicator="#loading">Budget</a>
         </nav>
