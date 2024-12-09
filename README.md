@@ -4,7 +4,7 @@ A web server for viewing [hledger](https://hledger.org/) data powered by [htmx](
 * Easily view data across time periods
 * Monitor a monthly budget
 
-Warning: this was written quickly for personal use and contains some hacks! So far this is tested against `hledger v1.27.1` and it should be run on the same machine that has hledger installed with your journal files (the server just calls `hledger` natively and parses its output for the data.)
+Warning: this was written quickly for personal use and contains some hacks! So far this is tested against `hledger v1.27.1` and it should be run on the same machine that has hledger installed with your journal files (the server just calls `hledger` natively and parses its output.)
 
 
 
