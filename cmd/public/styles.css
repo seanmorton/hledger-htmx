@@ -1,5 +1,8 @@
 :root {
   --accent: green;
+  --green: rgb(20, 148, 83);
+  --yellow: rgb(212, 212, 28);
+  --red: rgb(212, 72, 28);
 }
 
 h1,h2,h3,h4,h5 {
@@ -11,17 +14,23 @@ h1,h2,h3,h4,h5 {
     display: none;
 }
 
+.fg-green {
+    color: var(--green);
+}
+.fg-yellow {
+    color: var(--yellow);
+}
+.fg-red {
+    color: var(--red);
+}
 .bg-green {
-    --tw-bg-opacity: 1;
-    background-color: rgb(20 148 83/var(--tw-bg-opacity));
+    background-color: var(--green);
 }
 .bg-yellow {
-    --tw-bg-opacity: 1;
-    background-color: rgb(212 212 28/var(--tw-bg-opacity));
+    background-color: var(--yellow);
 }
 .bg-red {
-    --tw-bg-opacity: 1;
-    background-color: rgb(212 72 28/var(--tw-bg-opacity));
+    background-color: var(--red);
 }
 
 .loader{

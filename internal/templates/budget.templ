@@ -16,12 +16,24 @@ func barColor(item hledger.BudgetItem) string {
   }
 }
 
+// TODO configure thresholds
+func spendColor(spend float64) string {
+  if spend < 3800 {
+    return "fg-green"
+  } else if spend < 4200 {
+    return "fg-yellow"
+  } else {
+    return "fg-red"
+  }
+}
+
 func barWidth(item hledger.BudgetItem) string {
   return fmt.Sprintf("w-[%.0f%%]", item.Percent())
 }
 
-templ Budget(from, to string, items []hledger.BudgetItem) {
+templ Budget(from, to string, items []hledger.BudgetItem, currCCBal float64) {
   @Params("/budget", "main", "", from, to, false, false)
+  <h5>CC Spend: <span class={ spendColor(currCCBal) }>{ money(currCCBal) }</span></h5>
   for _, item := range items {
     <div
       class="budgetRow"

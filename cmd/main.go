@@ -38,8 +38,10 @@ func main() {
 		if from == "" || to == "" {
 			from, to = defaultDateRange()
 		}
+		// TODO allow configuration of accounts
+		currCCBal, _ := hledger.Balances("li:cc not:li:cc:chase:united", from, to, 0, false, true)
 		items, _ := hledger.Budget(from, to, budgetItems)
-		render(w, r, templates.Budget(from, to, items))
+		render(w, r, templates.Budget(from, to, items, currCCBal.Amount))
 	})
 
 	http.HandleFunc("/accounts", func(w http.ResponseWriter, r *http.Request) {
