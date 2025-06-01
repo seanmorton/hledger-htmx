@@ -1,4 +1,4 @@
-FROM golang:1.21.3-bookworm AS build
+FROM golang:1.24.3-bookworm AS build
 
 WORKDIR /usr/src/app
 COPY go.mod go.sum ./
@@ -10,7 +10,7 @@ COPY . .
 RUN go generate ./... && go build -v -o /usr/local/bin/app ./cmd
 
 
-FROM alpine:3.19.0
+FROM alpine:3.22.0
 
 ENV LEDGER_FILE=/etc/hledger.journal
 EXPOSE 8080
