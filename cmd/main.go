@@ -39,7 +39,7 @@ func main() {
 			from, to = defaultDateRange()
 		}
 		// TODO allow configuration of accounts
-		currCCBal, _ := hledger.Balances("li:cc not:li:cc:chase:united", from, to, 0, false, true)
+		currCCBal, _ := hledger.Balances("li:cc", from, to, 0, false, true)
 		items, _ := hledger.Budget(from, to, budgetItems)
 		render(w, r, templates.Budget(from, to, items, currCCBal.Amount))
 	})

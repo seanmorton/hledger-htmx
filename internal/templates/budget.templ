@@ -18,7 +18,7 @@ func barColor(item hledger.BudgetItem) string {
 
 // TODO configure thresholds
 func spendColor(spend float64) string {
-  if spend < 3800 {
+  if spend < 3500 {
     return "fg-green"
   } else if spend < 4200 {
     return "fg-yellow"
