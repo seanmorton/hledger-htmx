@@ -100,7 +100,7 @@ func parseBalances(acct, csv string) Balance {
 		data := strings.Split(row, ",")
 		if len(data) == 2 && data[0] != "\"account\"" { // Skip header
 			amount, _ := parseAmount(data[1])
-			if data[0] == "\"total\"" {
+			if data[0] == "\"Total:\"" {
 				total = amount
 				continue
 			}
