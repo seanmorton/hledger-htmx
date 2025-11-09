@@ -1,9 +1,11 @@
 module github.com/seanmorton/hledger-htmx
 
-go 1.21
+go 1.23.0
+
+toolchain go1.24.5
 
 require (
-	github.com/a-h/templ v0.2.501
+	github.com/a-h/templ v0.3.943
 	github.com/leekchan/accounting v1.0.0
 )
 
