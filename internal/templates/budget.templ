@@ -36,15 +36,19 @@ templ Budget(from, to string, items []hledger.BudgetItem, currCCBal float64) {
   <h5>CC Spend: <span class={ spendColor(currCCBal) }>{ money(currCCBal) }</span></h5>
   for _, item := range items {
     <div
-      class="budgetRow"
       hx-get={ fmt.Sprintf("/register?from=%s&to=%s&account=%s", from, to, item.Account) }
       hx-on::after-request="this.appendChild(htmx.find('#budgetRegister'));"
       hx-target="#budgetRegister"
       hx-indicator="#loading"
       >
       <h4>{ item.Name }</h4>
-      <div class="w-full border">
-        <div class={ "budgetBar", barColor(item), barWidth(item) }>{ money(item.Remaining()) }</div>
+      <div class="w-full border relative">
+        <div class="budgetBarMarker left25"></div>
+        <div class="budgetBarMarker left50"></div>
+        <div class="budgetBarMarker left75"></div>
+        <div class={ "budgetBar", barColor(item), barWidth(item) }>
+          <span>{ money(item.Remaining()) }</span>
+        </div>
       </div>
       <span>({ money(item.Spent) } / { money(item.Target) })</span>
     </div>
