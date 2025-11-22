@@ -4,8 +4,6 @@ WORKDIR /usr/src/app
 COPY go.mod go.sum ./
 
 RUN go mod download && go mod verify
-RUN go install github.com/a-h/templ/cmd/templ@v0.2.501
-
 COPY . .
 RUN go generate ./... && go build -v -o /usr/local/bin/app ./cmd
 
