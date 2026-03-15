@@ -33,7 +33,6 @@ templ Index(content templ.Component) {
               crossorigin="anonymous">
       </script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-      <script src="https://unpkg.com/pulltorefreshjs"></script>
     </head>
     <body>
       <span id="loading" class="loader"></span>
@@ -91,8 +90,6 @@ templ Index(content templ.Component) {
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker.register("/public/sw.js");
         }
-
-        PullToRefresh.init();
       </script>
     </body>
   </html>
