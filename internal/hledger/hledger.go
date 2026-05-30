@@ -94,9 +94,9 @@ func hledger(args string) (string, error) {
 func parseBalances(acct, csv string) Balance {
 	var total float64
 	subBalances := []Balance{}
-	rows := strings.Split(csv, "\n")
+	rows := strings.SplitSeq(csv, "\n")
 
-	for _, row := range rows {
+	for row := range rows {
 		data := strings.Split(row, ",")
 		if len(data) == 2 && data[0] != "\"account\"" { // Skip header
 			amount, _ := parseAmount(data[1])
@@ -112,11 +112,10 @@ func parseBalances(acct, csv string) Balance {
 		}
 	}
 
-	if strings.HasSuffix(acct, ":") {
-		acct = acct[:len(acct)-1]
-	}
+	trimmedAcct := strings.TrimSuffix(acct, ":")
+
 	return Balance{
-		Account:     acct,
+		Account:     trimmedAcct,
 		Amount:      total,
 		SubBalances: subBalances,
 	}
@@ -124,9 +123,9 @@ func parseBalances(acct, csv string) Balance {
 
 func parseRegister(csv string) []RegisterEntry {
 	entries := []RegisterEntry{}
-	rows := strings.Split(csv, "\n")
+	rows := strings.SplitSeq(csv, "\n")
 
-	for _, row := range rows {
+	for row := range rows {
 		data := strings.Split(row, ",")
 		if len(data) == 7 && data[0] != "\"txnidx\"" {
 			amount, _ := parseAmount(data[5])
