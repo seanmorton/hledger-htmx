@@ -74,7 +74,7 @@ func Register(acct, to, from string, historical, invert bool) ([]RegisterEntry, 
 func Budget(from, to string, items []BudgetItem) ([]BudgetItem, error) {
 	for i, item := range items {
 		balance, _ := Balances(item.Account, from, to, 0, false, false)
-		item.Spent = balance.Amount
+		item.Spent = max(balance.Amount, -balance.Amount) // Budget items are always expressed as positive
 		items[i] = item
 	}
 	return items, nil
